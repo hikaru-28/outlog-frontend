@@ -33,4 +33,32 @@ const createInput = async (title: string, type: string, memo?: string) => {
     }
 }
 
-export { getAllInputs, createInput };
+const updateInput = async (id: string, title: string, type: string, memo?: string) => {
+    try {
+        const res = await fetch(`${url}/inputs/${id}`, {
+            method: 'PATCH',
+            headers: getAuthHeaders(),
+            body: JSON.stringify({ title, type, memo })
+        });
+        if (!res.ok) throw new Error(`inputの更新に失敗しました: ${res.status}`);
+        const data = await res.json();
+        return data;
+    } catch (error) {
+        console.error('inputの更新に失敗しました', error);
+    }
+}
+
+const deleteInput = async (id: string) => {
+    try {
+        const res = await fetch(`${url}/inputs/${id}`, {
+            method: 'DELETE',
+            headers: getAuthHeaders(),
+        });
+        if (!res.ok) throw new Error(`inputの削除に失敗しました: ${res.status}`);
+        return true;
+    } catch (error) {
+        console.error('inputの削除に失敗しました', error);
+    }
+}
+
+export { getAllInputs, createInput, updateInput, deleteInput };
