@@ -21,5 +21,23 @@ const register = async (email: string, password: string) => {
     }
 }
 
-export { register };
+const login = async (email: string, password: string) => {
+    try {
+        const res = await fetch(`${url}/auth/login`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({ email, password })
+        });
+        if (!res.ok) {
+            throw new Error(`ログインに失敗しました: ${res.status}`);
+        }
+        const data = await res.json();
+        localStorage.setItem('token', data.token);
+        return data;
+    } catch (error) {
+        console.error('ログインに失敗しました:', error);
+    }
+}
+
+export { register, login };
 
