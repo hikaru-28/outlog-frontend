@@ -11,9 +11,7 @@ const register = async (email: string, password: string) => {
             headers: getHeaders(),
             body: JSON.stringify({ email, password }),
         });
-        if (!res.ok) {
-            throw new Error(`ユーザー登録に失敗しました: ${res.status}`);
-        }
+        if (!res.ok) throw new Error(`ユーザー登録に失敗しました: ${res.status}`);
         const data = await res.json();
         return data;
     } catch (error) {
@@ -28,9 +26,7 @@ const login = async (email: string, password: string) => {
             headers: getHeaders(),
             body: JSON.stringify({ email, password })
         });
-        if (!res.ok) {
-            throw new Error(`ログインに失敗しました: ${res.status}`);
-        }
+        if (!res.ok) throw new Error(`ログインに失敗しました: ${res.status}`);
         const data = await res.json();
         localStorage.setItem('token', data.token);
         return data;
