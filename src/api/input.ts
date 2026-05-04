@@ -18,4 +18,19 @@ const getAllInputs = async () => {
     }
 }
 
-export { getAllInputs };
+const createInput = async (title: string, type: string, memo?: string) => {
+    try {
+        const res = await fetch(`${url}/inputs`, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify({ title, type, memo })
+        });
+        if (!res.ok) throw new Error(`inputの作成に失敗しました: ${res.status}`);
+        const data = await res.json();
+        return data;
+    } catch (error) {
+        console.error('inputの作成に失敗しました', error);
+    }
+}
+
+export { getAllInputs, createInput };
