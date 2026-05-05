@@ -9,7 +9,7 @@ const getOutputsByInputId = async (inputId: string) => {
         const res = await fetch(`${url}/inputs/${inputId}/output`, {
             headers: getAuthHeaders(),
         });
-        if (!res.ok) throw new Error(`outputの取得に失敗しました`);
+        if (!res.ok) throw new Error(`outputの取得に失敗しました: ${res.status}`);
         const data = await res.json();
         return data;
     } catch (error) {
@@ -17,4 +17,19 @@ const getOutputsByInputId = async (inputId: string) => {
     }
 }
 
-export { getOutputsByInputId };
+const createOutput = async (inputId: string, content: string) => {
+    try {
+        const res = await fetch(`${url}/inputs/${inputId}/output`, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify({ content })
+        });
+        if (!res.ok) throw new Error(`outputの作成に失敗しました: ${res.status}`);
+        const data = await res.json();
+        return data;
+    } catch (error) {
+        console.error('outputの作成に失敗しました', error);
+    }
+}
+
+export { getOutputsByInputId, createOutput };
