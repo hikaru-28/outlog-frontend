@@ -32,4 +32,19 @@ const createOutput = async (inputId: string, content: string) => {
     }
 }
 
-export { getOutputsByInputId, createOutput };
+const updateOutput = async (inputId: string, content: string) => {
+    try {
+        const res = await fetch(`${url}/inputs/${inputId}/output`, {
+            method: 'PATCH',
+            headers: getAuthHeaders(),
+            body: JSON.stringify({ content })
+        });
+        if (!res.ok) throw new Error(`outputの更新に失敗しました: ${res.status}`);
+        const data = await res.json();
+        return data;
+    } catch (error) {
+        console.error('outputの更新に失敗しました', error);
+    }
+}
+
+export { getOutputsByInputId, createOutput, updateOutput };
