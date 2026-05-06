@@ -1,5 +1,55 @@
+import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import { getAllInputs } from '@/api/input'
+import type { Input } from '../types'
+
 const HomePage = () => {
-    return <div>HomePage</div>
+    const [inputs, setInputs] = useState<Input[]>([])
+
+    const fetchInputs = async () => {
+        try {
+            const data = await getAllInputs()
+            setInputs(data)
+        } catch (error) {
+            console.error('inputの取得に失敗しました', error)
+        }
+    }
+
+    const isOverdue = (createdAt: string) => {
+        const now = new Date()
+        const created = new Date(createdAt)
+        const diff = now.getTime() - created.getTime()
+        return diff > 24 * 60 * 60 * 1000  // 24時間をミリ秒で表現
+    }
+
+    useEffect(() => {
+        fetchInputs()
+    }, [])
+
+    return (
+        <div>
+            <h1>インプット一覧</h1>
+
+            <Link to='/inputs/new'>新規インプット</Link>
+
+            <ul>
+                {inputs.map((input) => {
+                    return (
+                        <li key={input.id}>
+                            <h3>{input.title}</h3>
+                            <p>{input.type}</p>
+                            <p>{input.memo}</p>
+                            <p>{input.isOutputDone ? '完了' : '未完了'}</p>
+                            <p>{input.createdAt}</p>
+                            <Link to={`/inputs/${input.id}/edit`}>編集</Link>
+                            <Link to={`/inputs/${input.id}/output`}>アウトプット</Link>
+                            {isOverdue(input.createdAt) && !input.isOutputDone && <p>インプットから24時間経過しています</p>}
+                        </li>
+                    )
+                })}
+            </ul>
+        </div>
+    )
 }
 
 export default HomePage
