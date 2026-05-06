@@ -38,8 +38,17 @@ const LoginPage = () => {
     return (
         <div>
             <h1>ログイン</h1>
-            <Input value={email} onChange={handleChangeEmail} placeholder="メールアドレス" />
-            <Input value={password} onChange={handleChangePassword} type="password" placeholder="パスワード" />
+            <Input
+                value={email}
+                onChange={handleChangeEmail}
+                placeholder="メールアドレス"
+            />
+            <Input
+                value={password}
+                onChange={handleChangePassword}
+                type="password"
+                placeholder="パスワード"
+            />
             <Button onClick={handleSubmit}>ログイン</Button>
             <Link to='/register'>アカウント登録はこちら</Link>
         </div>
