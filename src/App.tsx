@@ -15,7 +15,7 @@ function App() {
       <Route element={<PrivateRoute />} >
         <Route path='/' element={<HomePage />} />
         <Route path='/inputs/new' element={<InputNewPage />} />
-        <Route path='/inputs/:id' element={<InputEditPage />} />
+        <Route path='/inputs/:id/edit' element={<InputEditPage />} />
         <Route path='/inputs/:id/output' element={<OutputPage />} />
       </Route>
 
