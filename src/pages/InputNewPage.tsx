@@ -44,6 +44,8 @@ const InputNewPage = () => {
         <div>
             <h1>新規作成</h1>
 
+            <Button onClick={() => navigate('/')}>キャンセル</Button>
+
             <form onSubmit={handleSubmit}>
 
                 <div>
