@@ -1,15 +1,11 @@
+import { fetchWithAuth, BASE_URL } from './client'
 
-const url = 'http://localhost:3000/api'
-const getAuthHeaders = () => ({
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${localStorage.getItem('token')}`
-})
+const url = BASE_URL
 
 const getAllInputs = async () => {
     try {
-        const res = await fetch(`${url}/inputs`, {
-            headers: getAuthHeaders(),
-        })
+        const res = await fetchWithAuth(`${url}/inputs`)
+        if (!res) return
         if (!res.ok) throw new Error(`inputの取得に失敗しました: ${res.status}`)
         const data = await res.json()
         return data
@@ -20,9 +16,8 @@ const getAllInputs = async () => {
 
 const getInputById = async (id: string) => {
     try {
-        const res = await fetch(`${url}/inputs/${id}`, {
-            headers: getAuthHeaders(),
-        });
+        const res = await fetchWithAuth(`${url}/inputs/${id}`)
+        if (!res) return
         if (!res.ok) throw new Error(`inputの取得に失敗しました: ${res.status}`)
         const data = await res.json()
         return data
@@ -33,11 +28,11 @@ const getInputById = async (id: string) => {
 
 const createInput = async (title: string, type: string, memo?: string) => {
     try {
-        const res = await fetch(`${url}/inputs`, {
+        const res = await fetchWithAuth(`${url}/inputs`, {
             method: 'POST',
-            headers: getAuthHeaders(),
             body: JSON.stringify({ title, type, memo })
         })
+        if (!res) return
         if (!res.ok) throw new Error(`inputの作成に失敗しました: ${res.status}`)
         const data = await res.json()
         return data
@@ -48,11 +43,11 @@ const createInput = async (title: string, type: string, memo?: string) => {
 
 const updateInput = async (id: string, title: string, type: string, memo?: string) => {
     try {
-        const res = await fetch(`${url}/inputs/${id}`, {
+        const res = await fetchWithAuth(`${url}/inputs/${id}`, {
             method: 'PATCH',
-            headers: getAuthHeaders(),
             body: JSON.stringify({ title, type, memo })
         });
+        if (!res) return
         if (!res.ok) throw new Error(`inputの更新に失敗しました: ${res.status}`)
         const data = await res.json()
         return data
@@ -63,10 +58,10 @@ const updateInput = async (id: string, title: string, type: string, memo?: strin
 
 const deleteInput = async (id: string) => {
     try {
-        const res = await fetch(`${url}/inputs/${id}`, {
+        const res = await fetchWithAuth(`${url}/inputs/${id}`, {
             method: 'DELETE',
-            headers: getAuthHeaders(),
         })
+        if (!res) return
         if (!res.ok) throw new Error(`inputの削除に失敗しました: ${res.status}`)
         return true
     } catch (error) {
