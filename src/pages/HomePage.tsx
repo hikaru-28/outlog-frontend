@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { getAllInputs } from '@/api/input'
+import { Button } from '@/components/ui/button'
 import type { Input } from '../types'
 
 const HomePage = () => {
     const [inputs, setInputs] = useState<Input[]>([])
+    const navigate = useNavigate()
 
     const fetchInputs = async () => {
         try {
@@ -22,12 +24,19 @@ const HomePage = () => {
         return diff > 24 * 60 * 60 * 1000  // 24時間をミリ秒で表現
     }
 
+    const handleLogout = () => {
+        localStorage.removeItem('token')
+        navigate('/login')
+    }
+
     useEffect(() => {
         fetchInputs()
     }, [])
 
     return (
         <div>
+            <Button onClick={handleLogout}>ログアウト</Button>
+
             <h1>インプット一覧</h1>
 
             <Link to='/inputs/new'>新規インプット</Link>
