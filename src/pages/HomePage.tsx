@@ -11,7 +11,7 @@ const HomePage = () => {
     const fetchInputs = async () => {
         try {
             const data = await getAllInputs()
-            setInputs(data)
+            setInputs(data ?? [])
         } catch (error) {
             console.error('inputの取得に失敗しました', error)
         }
