@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { getAllInputs } from '@/api/input'
+import { getAllInputs, deleteInput } from '@/api/input'
 import { Button } from '@/components/ui/button'
 import type { Input } from '../types'
 
@@ -15,6 +15,11 @@ const HomePage = () => {
         } catch (error) {
             console.error('inputの取得に失敗しました', error)
         }
+    }
+
+    const handleDelete = async (id: string) => {
+        await deleteInput(id)
+        fetchInputs()
     }
 
     const isOverdue = (createdAt: string) => {
@@ -51,6 +56,7 @@ const HomePage = () => {
                             <p>{input.isOutputDone ? '完了' : '未完了'}</p>
                             <p>{input.createdAt}</p>
                             <Link to={`/inputs/${input.id}/edit`}>編集</Link>
+                            <Button onClick={() => handleDelete(input.id)}>削除</Button>
                             <Link to={`/inputs/${input.id}/output`}>アウトプット</Link>
                             {isOverdue(input.createdAt) && !input.isOutputDone && <p>インプットから24時間経過しています</p>}
                         </li>
