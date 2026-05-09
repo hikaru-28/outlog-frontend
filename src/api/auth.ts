@@ -7,34 +7,34 @@ const getHeaders = () => ({
 });
 
 const register = async (email: string, password: string) => {
-    try {
-        const res = await fetch(`${url}/auth/register`, {
-            method: 'POST',
-            headers: getHeaders(),
-            body: JSON.stringify({ email, password }),
-        })
-        if (!res.ok) throw new Error(`ユーザー登録に失敗しました: ${res.status}`)
+    const res = await fetch(`${url}/auth/register`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({ email, password }),
+    })
+    if (!res.ok) {
         const data = await res.json()
-        return data
-    } catch (error) {
-        console.error('ユーザー登録に失敗しました:', error)
+        throw new Error(data.message)
     }
+
+    const data = await res.json()
+    return data
+
 }
 
 const login = async (email: string, password: string) => {
-    try {
-        const res = await fetch(`${url}/auth/login`, {
-            method: 'POST',
-            headers: getHeaders(),
-            body: JSON.stringify({ email, password })
-        });
-        if (!res.ok) throw new Error(`ログインに失敗しました: ${res.status}`)
+    const res = await fetch(`${url}/auth/login`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({ email, password })
+    });
+    if (!res.ok) {
         const data = await res.json()
-        localStorage.setItem('token', data.token)
-        return data
-    } catch (error) {
-        console.error('ログインに失敗しました:', error)
+        throw new Error(data.message)
     }
+    const data = await res.json()
+    localStorage.setItem('token', data.token)
+    return data
 }
 
 export { register, login }

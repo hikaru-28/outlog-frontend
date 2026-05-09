@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { login } from '../api/auth'
 import { LogIn, Mail, Lock } from 'lucide-react'
+import { toast } from 'sonner'
 
 const LoginPage = () => {
     const [email, setEmail] = useState('')
@@ -15,14 +16,21 @@ const LoginPage = () => {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
 
+
         if (!email || !password) {
-            alert('メールアドレスとパスワードを入力してください');
+            toast.error('メールアドレスとパスワードを入力してください')
             return
         }
 
-        const result = await login(email, password)
-        if (result) {
+        const toastId = toast.loading('ログイン中...')
+        try {
+            await login(email, password)
+            toast.dismiss(toastId)
+            toast.success('ログインしました')
             navigate('/')
+        } catch (error) {
+            toast.dismiss(toastId)
+            toast.error(error instanceof Error ? error.message : 'ログインに失敗しました')
         }
     }
 
