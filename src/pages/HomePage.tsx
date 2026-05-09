@@ -7,12 +7,15 @@ import type { Input } from '../types'
 
 const HomePage = () => {
     const [inputs, setInputs] = useState<Input[]>([])
+    const [currentPage, setCurrentPage] = useState<number>(1)
+    const [totalPage, setTotalPage] = useState<number>(0)
     const navigate = useNavigate()
 
     const fetchInputs = async () => {
         try {
-            const data = await getAllInputs()
-            setInputs(data ?? [])
+            const data = await getAllInputs(currentPage)
+            setInputs(data.inputs)
+            setTotalPage(Math.ceil(data.total / 10))
         } catch (error) {
             console.error('inputの取得に失敗しました', error)
         }
@@ -66,7 +69,7 @@ const HomePage = () => {
 
     useEffect(() => {
         fetchInputs()
-    }, [])
+    }, [currentPage])
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -180,8 +183,28 @@ const HomePage = () => {
                             )
                         })}
                     </div>
+
                 )}
+                <div className="flex items-center justify-center gap-4 mt-8">
+                    <Button
+                        onClick={() => setCurrentPage(prev => prev - 1)}
+                        disabled={currentPage === 1}
+                        className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 disabled:opacity-50"
+                    >
+                        前へ
+                    </Button>
+                    <p className="text-gray-600 font-medium">{currentPage} / {totalPage}</p>
+                    <Button
+                        onClick={() => setCurrentPage(prev => prev + 1)}
+                        disabled={currentPage >= totalPage || totalPage === 0}
+                        className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 disabled:opacity-50"
+                    >
+                        次へ
+                    </Button>
+                </div>
             </div>
+
+
         </div>
     )
 }

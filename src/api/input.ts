@@ -2,9 +2,9 @@ import { fetchWithAuth, BASE_URL } from './client'
 
 const url = BASE_URL
 
-const getAllInputs = async () => {
+const getAllInputs = async (page: number = 1, limit: number = 10) => {
     try {
-        const res = await fetchWithAuth(`${url}/inputs`)
+        const res = await fetchWithAuth(`${url}/inputs?page=${page}&limit=${limit}`)
         if (!res) return
         if (!res.ok) throw new Error(`inputの取得に失敗しました: ${res.status}`)
         const data = await res.json()
