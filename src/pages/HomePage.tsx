@@ -4,27 +4,38 @@ import { getAllInputs, deleteInput } from '@/api/input'
 import { Button } from '@/components/ui/button'
 import { LogOut, Plus, Edit2, Trash2, FileText, BookOpen, PlayCircle, FileCheck, Clock, AlertCircle } from 'lucide-react'
 import type { Input } from '../types'
+import { toast } from 'sonner'
 
 const HomePage = () => {
     const [inputs, setInputs] = useState<Input[]>([])
     const [currentPage, setCurrentPage] = useState<number>(1)
     const [totalPage, setTotalPage] = useState<number>(0)
+    const [loading, setLoading] = useState<boolean>(false)
     const navigate = useNavigate()
 
     const fetchInputs = async () => {
+        setLoading(true)
         try {
             const data = await getAllInputs(currentPage)
             setInputs(data.inputs)
             setTotalPage(Math.ceil(data.total / 10))
         } catch (error) {
+            toast.error(error instanceof Error ? error.message : 'inputの取得に失敗しました')
             console.error('inputの取得に失敗しました', error)
+        } finally {
+            setLoading(false)
         }
     }
 
     const handleDelete = async (id: string) => {
-        if (window.confirm('本当に削除しますか？')) {
-            await deleteInput(id)
-            fetchInputs()
+        try {
+            if (window.confirm('本当に削除しますか？')) {
+                await deleteInput(id)
+                toast.success('削除に成功しました')
+                fetchInputs()
+            }
+        } catch (error) {
+            toast.error('削除に失敗しました')
         }
     }
 
@@ -100,7 +111,9 @@ const HomePage = () => {
                     </Link>
                 </div>
 
-                {inputs.length === 0 ? (
+                {loading ? (
+                    <div className="text-center py-16 text-gray-500">読み込み中...</div>
+                ) : inputs.length === 0 ? (
                     <div className="text-center py-16 bg-white rounded-xl border border-gray-200">
                         <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                         <h3 className="text-lg font-medium text-gray-900 mb-2">インプットがありません</h3>
