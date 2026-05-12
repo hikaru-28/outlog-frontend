@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { register } from '../api/auth'
 import { UserPlus, Mail, Lock } from 'lucide-react'
+import { toast } from 'sonner'
 
 const RegisterPage = () => {
     const [email, setEmail] = useState('')
@@ -15,14 +16,23 @@ const RegisterPage = () => {
         e.preventDefault()
 
         if (!email || !password) {
-            alert('メールアドレスとパスワードを入力してください');
+            toast.error('メールアドレスとパスワードを入力してください')
             return
         }
 
-        const result = await register(email, password)
-        if (result) {
+        const toastId = toast.loading('登録中...')
+
+        try {
+            await register(email, password)
+            toast.dismiss(toastId)
+            toast.success('ユーザー登録が完了しました')
             navigate('/login')
+        } catch (error) {
+            toast.dismiss(toastId)
+            toast.error(error instanceof Error ? error.message : 'ユーザー登録に失敗しました')
         }
+
+
     }
 
     const handleChangeEmail = (e: ChangeEvent<HTMLInputElement>) => {
