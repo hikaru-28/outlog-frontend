@@ -6,6 +6,7 @@ import { getInputById } from '@/api/input'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Save, FileText, Lightbulb } from 'lucide-react'
 import type { Output } from '@/types/index'
+import { toast } from 'sonner'
 
 const OutputPage = () => {
     const [output, setOutput] = useState<Output | null>(null)
@@ -46,8 +47,10 @@ const OutputPage = () => {
             } else {
                 await createOutput(id, content)
             }
+            toast.success('保存しました')
             navigate('/')
         } catch (error) {
+            toast.error('保存に失敗しました')
             console.error('アウトプットの保存に失敗しました', error)
         }
     }
