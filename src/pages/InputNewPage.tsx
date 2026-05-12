@@ -29,13 +29,15 @@ const InputNewPage = () => {
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         if (!title || !type) {
-            toast('タイトルとタイプは必須です')
+            toast.success('タイトルとタイプは必須です')
             return
         }
         try {
             await createInput(title, type, memo)
+            toast.success('作成しました')
             navigate('/')
         } catch (error) {
+            toast.error('作成に失敗しました')
             console.error('インプットの作成に失敗しました', error)
         }
     }
