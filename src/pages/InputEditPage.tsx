@@ -41,8 +41,10 @@ const InputEditPage = () => {
         }
         try {
             await updateInput(id, title, type, memo)
+            toast.success('更新しました')
             navigate('/')
         } catch (error) {
+            toast.error('更新に失敗しました')
             console.error('インプットの更新に失敗しました', error)
         }
     }
