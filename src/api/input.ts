@@ -3,70 +3,65 @@ import { fetchWithAuth, BASE_URL } from './client'
 const url = BASE_URL
 
 const getAllInputs = async (page: number = 1, limit: number = 10) => {
-    try {
-        const res = await fetchWithAuth(`${url}/inputs?page=${page}&limit=${limit}`)
-        if (!res) return
-        if (!res.ok) throw new Error(`inputの取得に失敗しました: ${res.status}`)
+    const res = await fetchWithAuth(`${url}/inputs?page=${page}&limit=${limit}`)
+    if (!res) return
+    if (!res.ok) {
         const data = await res.json()
-        return data
-    } catch (error) {
-        console.error('inputの取得に失敗しました:', error)
+        throw new Error(data.message)
     }
+    const data = await res.json()
+    return data
 }
 
 const getInputById = async (id: string) => {
-    try {
-        const res = await fetchWithAuth(`${url}/inputs/${id}`)
-        if (!res) return
-        if (!res.ok) throw new Error(`inputの取得に失敗しました: ${res.status}`)
+    const res = await fetchWithAuth(`${url}/inputs/${id}`)
+    if (!res) return
+    if (!res.ok) {
         const data = await res.json()
-        return data
-    } catch (error) {
-        console.error('inputの取得に失敗しました:', error)
+        throw new Error(data.message)
     }
+    const data = await res.json()
+    return data
 }
 
 const createInput = async (title: string, type: string, memo?: string) => {
-    try {
-        const res = await fetchWithAuth(`${url}/inputs`, {
-            method: 'POST',
-            body: JSON.stringify({ title, type, memo })
-        })
-        if (!res) return
-        if (!res.ok) throw new Error(`inputの作成に失敗しました: ${res.status}`)
+    const res = await fetchWithAuth(`${url}/inputs`, {
+        method: 'POST',
+        body: JSON.stringify({ title, type, memo })
+    })
+    if (!res) return
+    if (!res.ok) {
         const data = await res.json()
-        return data
-    } catch (error) {
-        console.error('inputの作成に失敗しました', error)
+        throw new Error(data.message)
     }
+    const data = await res.json()
+    return data
 }
 
 const updateInput = async (id: string, title: string, type: string, memo?: string) => {
-    try {
-        const res = await fetchWithAuth(`${url}/inputs/${id}`, {
-            method: 'PATCH',
-            body: JSON.stringify({ title, type, memo })
-        });
-        if (!res) return
-        if (!res.ok) throw new Error(`inputの更新に失敗しました: ${res.status}`)
+    const res = await fetchWithAuth(`${url}/inputs/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ title, type, memo })
+    });
+    if (!res) return
+    if (!res.ok) {
         const data = await res.json()
-        return data
-    } catch (error) {
-        console.error('inputの更新に失敗しました', error)
+        throw new Error(data.message)
     }
+    const data = await res.json()
+    return data
 }
 
 const deleteInput = async (id: string) => {
-    try {
-        const res = await fetchWithAuth(`${url}/inputs/${id}`, {
-            method: 'DELETE',
-        })
-        if (!res) return
-        if (!res.ok) throw new Error(`inputの削除に失敗しました: ${res.status}`)
-        return true
-    } catch (error) {
-        console.error('inputの削除に失敗しました', error)
+    const res = await fetchWithAuth(`${url}/inputs/${id}`, {
+        method: 'DELETE',
+    })
+    if (!res) return
+    if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.message)
     }
+    return true
 }
 
 export { getAllInputs, getInputById, createInput, updateInput, deleteInput }
