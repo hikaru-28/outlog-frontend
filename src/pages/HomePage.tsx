@@ -78,17 +78,19 @@ const HomePage = () => {
         navigate('/login')
     }
 
+    const delayClass = ['', 'animation-delay-100', 'animation-delay-200', 'animation-delay-300', 'animation-delay-400']
+
     useEffect(() => {
         fetchInputs()
     }, [currentPage])
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="animate-fade-in min-h-screen bg-gray-50">
             <div className="bg-white border-b border-gray-200">
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
                     <h1 className="text-2xl font-bold text-indigo-600">Outlog</h1>
                     <Button
-                        className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300"
+                        className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 active:scale-95 transition-transform duration-100"
                         onClick={handleLogout}
                     >
                         <LogOut className="w-4 h-4 mr-2" />
@@ -104,7 +106,7 @@ const HomePage = () => {
                         <p className="text-gray-600 mt-1">{inputs.length}件のインプット</p>
                     </div>
                     <Link to='/inputs/new'>
-                        <Button className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-md">
+                        <Button className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-md active:scale-95 transition-transform duration-100">
                             <Plus className="w-5 h-5 mr-2" />
                             新規インプット
                         </Button>
@@ -112,14 +114,18 @@ const HomePage = () => {
                 </div>
 
                 {loading ? (
-                    <div className="text-center py-16 text-gray-500">読み込み中...</div>
+                    <div className="grid gap-4">
+                        {[...Array(3)].map((_, i) => (
+                            <div key={i} className="animate-pulse bg-gray-200 rounded-xl h-32 w-full" />
+                        ))}
+                    </div>
                 ) : inputs.length === 0 ? (
                     <div className="text-center py-16 bg-white rounded-xl border border-gray-200">
                         <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                         <h3 className="text-lg font-medium text-gray-900 mb-2">インプットがありません</h3>
                         <p className="text-gray-500 mb-6">新しいインプットを作成して学習を始めましょう</p>
                         <Link to='/inputs/new'>
-                            <Button className="bg-indigo-600 hover:bg-indigo-700 text-white">
+                            <Button className="bg-indigo-600 hover:bg-indigo-700 text-white active:scale-95 transition-transform duration-100">
                                 <Plus className="w-5 h-5 mr-2" />
                                 最初のインプットを作成
                             </Button>
@@ -127,12 +133,12 @@ const HomePage = () => {
                     </div>
                 ) : (
                     <div className="grid gap-4">
-                        {inputs.map((input) => {
+                        {inputs.map((input, index) => {
                             const overdue = isOverdue(input.createdAt) && !input.isOutputDone
                             return (
                                 <div
                                     key={input.id}
-                                    className={`bg-white rounded-xl border-2 p-6 hover:shadow-lg transition-all ${overdue ? 'border-red-200 bg-red-50' : 'border-gray-200'
+                                    className={`animate-slide-up ${delayClass[index % 5]} bg-white rounded-xl border-2 p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 ${overdue ? 'border-red-200 bg-red-50' : 'border-gray-200'
                                         }`}
                                 >
                                     <div className="flex items-start justify-between mb-4">
@@ -174,20 +180,20 @@ const HomePage = () => {
 
                                     <div className="flex items-center gap-2 pt-4 border-t border-gray-200">
                                         <Link to={`/inputs/${input.id}/output`} className="flex-1">
-                                            <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">
+                                            <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white active:scale-95 transition-transform duration-100">
                                                 <FileCheck className="w-4 h-4 mr-2" />
                                                 アウトプット
                                             </Button>
                                         </Link>
                                         <Link to={`/inputs/${input.id}/edit`}>
-                                            <Button className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300">
+                                            <Button className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 active:scale-95 transition-transform duration-100">
                                                 <Edit2 className="w-4 h-4 mr-2" />
                                                 編集
                                             </Button>
                                         </Link>
                                         <Button
                                             onClick={() => handleDelete(input.id)}
-                                            className="bg-white hover:bg-red-50 text-red-600 border border-gray-300 hover:border-red-300"
+                                            className="bg-white hover:bg-red-50 text-red-600 border border-gray-300 hover:border-red-300 active:scale-95 transition-transform duration-100"
                                         >
                                             <Trash2 className="w-4 h-4" />
                                         </Button>
@@ -202,7 +208,7 @@ const HomePage = () => {
                     <Button
                         onClick={() => setCurrentPage(prev => prev - 1)}
                         disabled={currentPage === 1}
-                        className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 disabled:opacity-50"
+                        className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 disabled:opacity-50 active:scale-95 transition-transform duration-100"
                     >
                         前へ
                     </Button>
@@ -210,7 +216,7 @@ const HomePage = () => {
                     <Button
                         onClick={() => setCurrentPage(prev => prev + 1)}
                         disabled={currentPage >= totalPage || totalPage === 0}
-                        className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 disabled:opacity-50"
+                        className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 disabled:opacity-50 active:scale-95 transition-transform duration-100"
                     >
                         次へ
                     </Button>
