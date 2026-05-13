@@ -11,7 +11,8 @@ const InputNewPage = () => {
     const [formData, setFormData] = useState({
         title: '',
         type: '本',
-        memo: ''
+        memo: '',
+        customType: ''
     })
 
     const { title, type, memo } = formData
@@ -33,7 +34,7 @@ const InputNewPage = () => {
             return
         }
         try {
-            await createInput(title, type, memo)
+            await createInput(title, type === 'その他' ? formData.customType : type, memo)
             toast.success('作成しました')
             navigate('/')
         } catch (error) {
@@ -100,7 +101,8 @@ const InputNewPage = () => {
                             {type === "その他" && (
                                 <div className="mt-3">
                                     <Input
-                                        name="type"
+                                        name="customType"
+                                        value={formData.customType}
                                         onChange={handleChange}
                                         placeholder="種別を入力してください"
                                         className="w-full"
