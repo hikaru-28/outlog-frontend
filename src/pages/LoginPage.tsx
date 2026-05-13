@@ -43,7 +43,7 @@ const LoginPage = () => {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50 animate-fade-in">
             <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md border border-gray-100">
                 <div className="text-center mb-8">
                     <div className="inline-flex items-center justify-center w-16 h-16 bg-indigo-600 rounded-2xl mb-4">
@@ -84,7 +84,7 @@ const LoginPage = () => {
                             />
                         </div>
                     </div>
-                    <Button className="text-white w-full bg-indigo-600 hover:bg-indigo-700 shadow-md" type="submit">
+                    <Button className="text-white w-full bg-indigo-600 hover:bg-indigo-700 shadow-md active:scale-95 transition-transform duration-100" type="submit">
                         <LogIn className="w-5 h-5 mr-2" />
                         ログイン
                     </Button>
