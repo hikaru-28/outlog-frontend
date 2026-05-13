@@ -29,7 +29,7 @@ const InputNewPage = () => {
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         if (!title || !type) {
-            toast.success('タイトルとタイプは必須です')
+            toast.error('タイトルとタイプは必須です')
             return
         }
         try {
@@ -43,12 +43,12 @@ const InputNewPage = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50 animate-fade-in">
             <div className="bg-white border-b border-gray-200">
                 <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <Button
                         onClick={() => navigate('/')}
-                        className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300"
+                        className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 active:scale-95 transition-transform duration-100"
                     >
                         <ArrowLeft className="w-4 h-4 mr-2" />
                         戻る
@@ -128,7 +128,7 @@ const InputNewPage = () => {
                     <div className="flex items-center gap-3 mt-8 pt-6 border-t border-gray-200">
                         <Button
                             type="submit"
-                            className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white shadow-md"
+                            className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white shadow-md active:scale-95 transition-transform duration-100"
                         >
                             <Plus className="w-5 h-5 mr-2" />
                             作成
@@ -136,7 +136,7 @@ const InputNewPage = () => {
                         <Button
                             type="button"
                             onClick={() => navigate('/')}
-                            className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300"
+                            className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 active:scale-95 transition-transform duration-100"
                         >
                             キャンセル
                         </Button>
