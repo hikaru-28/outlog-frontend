@@ -11,7 +11,8 @@ const InputEditPage = () => {
     const [formData, setFormData] = useState({
         title: '',
         type: '本',
-        memo: ''
+        memo: '',
+        customType: ''
     })
     const [loading, setLoading] = useState(true)
     const { title, type, memo } = formData
@@ -21,10 +22,14 @@ const InputEditPage = () => {
     const fetchSingleInput = async () => {
         try {
             const { title, type, memo } = await getInputById(id)
+            const predefinedTypes = ['本', 'Youtube', '記事']
+            const isCustomType = !predefinedTypes.includes(type)
+
             setFormData({
                 title,
-                type,
-                memo: memo || ''
+                type: isCustomType ? 'その他' : type,
+                memo: memo || '',
+                customType: isCustomType ? type : ''
             })
         } catch (error) {
             console.error('インプットの取得に失敗しました', error)
@@ -40,7 +45,7 @@ const InputEditPage = () => {
             return
         }
         try {
-            await updateInput(id, title, type, memo)
+            await updateInput(id, title, type === 'その他' ? formData.customType : type, memo)
             toast.success('更新しました')
             navigate('/')
         } catch (error) {
@@ -127,7 +132,8 @@ const InputEditPage = () => {
                             {type === "その他" && (
                                 <div className="mt-3">
                                     <Input
-                                        name="type"
+                                        name="customType"
+                                        value={formData.customType}
                                         onChange={handleChange}
                                         placeholder="種別を入力してください"
                                         className="w-full"
