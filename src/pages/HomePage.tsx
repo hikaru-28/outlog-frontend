@@ -5,6 +5,17 @@ import { Button } from '@/components/ui/button'
 import { LogOut, Plus, Edit2, Trash2, FileText, BookOpen, PlayCircle, FileCheck, Clock, AlertCircle } from 'lucide-react'
 import type { Input } from '../types'
 import { toast } from 'sonner'
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 
 const HomePage = () => {
     const [inputs, setInputs] = useState<Input[]>([])
@@ -191,12 +202,28 @@ const HomePage = () => {
                                                 編集
                                             </Button>
                                         </Link>
-                                        <Button
-                                            onClick={() => handleDelete(input.id)}
-                                            className="bg-white hover:bg-red-50 text-red-600 border border-gray-300 hover:border-red-300 active:scale-95 transition-transform duration-100"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </Button>
+                                        <AlertDialog>
+                                            {/* これをクリックするとダイアログが開く */}
+                                            <AlertDialogTrigger asChild>
+                                                <Button>削除</Button>
+                                            </AlertDialogTrigger>
+
+                                            {/* ダイアログの中身 */}
+                                            <AlertDialogContent>
+                                                <AlertDialogHeader>
+                                                    <AlertDialogTitle>本当に削除しますか？</AlertDialogTitle>
+                                                    <AlertDialogDescription>
+                                                        この操作は取り消せません。
+                                                    </AlertDialogDescription>
+                                                </AlertDialogHeader>
+                                                <AlertDialogFooter>
+                                                    <AlertDialogCancel>キャンセル</AlertDialogCancel>
+                                                    <AlertDialogAction onClick={() => handleDelete(input.id)}>
+                                                        削除
+                                                    </AlertDialogAction>
+                                                </AlertDialogFooter>
+                                            </AlertDialogContent>
+                                        </AlertDialog>
                                     </div>
                                 </div>
                             )
