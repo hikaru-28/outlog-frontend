@@ -40,11 +40,9 @@ const HomePage = () => {
 
     const handleDelete = async (id: string) => {
         try {
-            if (window.confirm('本当に削除しますか？')) {
-                await deleteInput(id)
-                toast.success('削除に成功しました')
-                fetchInputs()
-            }
+            await deleteInput(id)
+            toast.success('削除に成功しました')
+            fetchInputs()
         } catch (error) {
             toast.error('削除に失敗しました')
         }
@@ -205,11 +203,13 @@ const HomePage = () => {
                                         <AlertDialog>
                                             {/* これをクリックするとダイアログが開く */}
                                             <AlertDialogTrigger asChild>
-                                                <Button>削除</Button>
+                                                <Button className="bg-white hover:bg-red-50 text-red-600 border border-gray-300 hover:border-red-300 active:scale-95 transition-transform duration-100">
+                                                    <Trash2 className="w-4 h-4" />
+                                                </Button>
                                             </AlertDialogTrigger>
 
                                             {/* ダイアログの中身 */}
-                                            <AlertDialogContent>
+                                            <AlertDialogContent className="bg-white">
                                                 <AlertDialogHeader>
                                                     <AlertDialogTitle>本当に削除しますか？</AlertDialogTitle>
                                                     <AlertDialogDescription>
@@ -218,7 +218,10 @@ const HomePage = () => {
                                                 </AlertDialogHeader>
                                                 <AlertDialogFooter>
                                                     <AlertDialogCancel>キャンセル</AlertDialogCancel>
-                                                    <AlertDialogAction onClick={() => handleDelete(input.id)}>
+                                                    <AlertDialogAction
+                                                        onClick={() => handleDelete(input.id)}
+                                                        className="bg-red-600 hover:bg-red-700 text-white"
+                                                    >
                                                         削除
                                                     </AlertDialogAction>
                                                 </AlertDialogFooter>
