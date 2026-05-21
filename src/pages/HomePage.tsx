@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { getAllInputs, deleteInput } from '@/api/input'
 import { Button } from '@/components/ui/button'
-import { LogOut, Plus, Edit2, Trash2, FileText, BookOpen, PlayCircle, FileCheck, Clock, AlertCircle } from 'lucide-react'
+import { LogOut, Plus, Edit2, Trash2, FileText, BookOpen, PlayCircle, FileCheck, Clock, AlertCircle, GraduationCap } from 'lucide-react'
 import type { Input } from '../types'
 import { toast } from 'sonner'
 import {
@@ -77,6 +77,8 @@ const HomePage = () => {
                 return <PlayCircle className={size} />
             case '記事':
                 return <FileText className={size} />
+            case '講義':
+                return <GraduationCap className={size} />
             default:
                 return <FileText className={size} />
         }

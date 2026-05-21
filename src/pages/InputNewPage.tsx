@@ -95,7 +95,7 @@ const InputNewPage = () => {
                                     <option value="Youtube">🎥 Youtube</option>
                                     <option value="記事">📄 記事</option>
                                     <option value="講義">🪧 講義</option>
-                                    {/* <option value="その他">📝 その他</option> */}
+                                    <option value="その他">📝 その他</option>
                                 </select>
                             </div>
 

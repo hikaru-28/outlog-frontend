@@ -22,7 +22,7 @@ const InputEditPage = () => {
     const fetchSingleInput = async () => {
         try {
             const { title, type, memo } = await getInputById(id)
-            const predefinedTypes = ['本', 'Youtube', '記事']
+            const predefinedTypes = ['本', 'Youtube', '記事', '講義']
             const isCustomType = !predefinedTypes.includes(type)
 
             setFormData({
@@ -125,6 +125,7 @@ const InputEditPage = () => {
                                     <option value="本">📚 本</option>
                                     <option value="Youtube">🎥 Youtube</option>
                                     <option value="記事">📄 記事</option>
+                                    <option value="講義">🪧 講義</option>
                                     <option value="その他">📝 その他</option>
                                 </select>
                             </div>
