@@ -69,16 +69,16 @@ const HomePage = () => {
         }
     }
 
-    const getTypeIcon = (type: string) => {
+    const getTypeIcon = (type: string, size: string = 'w-5 h-5') => {
         switch (type) {
             case '本':
-                return <BookOpen className="w-5 h-5" />
+                return <BookOpen className={size} />
             case 'Youtube':
-                return <PlayCircle className="w-5 h-5" />
+                return <PlayCircle className={size} />
             case '記事':
-                return <FileText className="w-5 h-5" />
+                return <FileText className={size} />
             default:
-                return <FileText className="w-5 h-5" />
+                return <FileText className={size} />
         }
     }
 
@@ -160,7 +160,7 @@ const HomePage = () => {
                                                 <h3 className="text-xl font-semibold text-gray-900 mb-2">{input.title}</h3>
                                                 <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
                                                     <span className="inline-flex items-center gap-1">
-                                                        <FileText className="w-4 h-4" />
+                                                        {getTypeIcon(input.type, 'w-4 h-4')}
                                                         {input.type}
                                                     </span>
                                                     <span className="inline-flex items-center gap-1">
