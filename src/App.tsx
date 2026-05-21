@@ -6,19 +6,20 @@ import HomePage from './pages/HomePage.tsx'
 import InputNewPage from './pages/InputNewPage.tsx'
 import InputEditPage from './pages/InputEditPage.tsx'
 import OutputPage from './pages/OutputPage.tsx'
+import LandingPage from './pages/LandingPage.tsx'
 
 function App() {
   return (
     <Routes>
+      <Route path='/' element={<LandingPage />} />
       <Route path='/register' element={<RegisterPage />} />
       <Route path='/login' element={<LoginPage />} />
       <Route element={<PrivateRoute />} >
-        <Route path='/' element={<HomePage />} />
+        <Route path='/home' element={<HomePage />} />
         <Route path='/inputs/new' element={<InputNewPage />} />
         <Route path='/inputs/:id/edit' element={<InputEditPage />} />
         <Route path='/inputs/:id/output' element={<OutputPage />} />
       </Route>
-
     </Routes>
   )
 }

@@ -36,7 +36,7 @@ const InputNewPage = () => {
         try {
             await createInput(title, type === 'その他' ? formData.customType : type, memo)
             toast.success('作成しました')
-            navigate('/')
+            navigate('/home')
         } catch (error) {
             toast.error('作成に失敗しました')
             console.error('インプットの作成に失敗しました', error)
@@ -48,7 +48,7 @@ const InputNewPage = () => {
             <div className="bg-white border-b border-gray-200">
                 <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <Button
-                        onClick={() => navigate('/')}
+                        onClick={() => navigate('/home')}
                         className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 active:scale-95 transition-transform duration-100"
                     >
                         <ArrowLeft className="w-4 h-4 mr-2" />
@@ -138,7 +138,7 @@ const InputNewPage = () => {
                         </Button>
                         <Button
                             type="button"
-                            onClick={() => navigate('/')}
+                            onClick={() => navigate('/home')}
                             className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 active:scale-95 transition-transform duration-100"
                         >
                             キャンセル

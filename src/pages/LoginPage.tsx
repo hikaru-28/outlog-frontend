@@ -27,7 +27,7 @@ const LoginPage = () => {
             await login(email, password)
             toast.dismiss(toastId)
             toast.success('ログインしました')
-            navigate('/')
+            navigate('/home')
         } catch (error) {
             toast.dismiss(toastId)
             toast.error(error instanceof Error ? error.message : 'ログインに失敗しました')
