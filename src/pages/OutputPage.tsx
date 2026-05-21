@@ -38,7 +38,7 @@ const OutputPage = () => {
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         if (!content.trim()) {
-            alert('アウトプット内容を入力してください')
+            toast.error('アウトプット内容を入力してください')
             return
         }
         try {
