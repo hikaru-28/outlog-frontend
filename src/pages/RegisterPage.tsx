@@ -9,6 +9,7 @@ import { toast } from 'sonner'
 
 const RegisterPage = () => {
     const [email, setEmail] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
     const [password, setPassword] = useState('')
     const navigate = useNavigate()
 
@@ -17,6 +18,14 @@ const RegisterPage = () => {
 
         if (!email || !password) {
             toast.error('メールアドレスとパスワードを入力してください')
+            return
+        }
+        if (password.length < 8) {
+            toast.error('パスワードは8文字以上で設定してください')
+            return
+        }
+        if (password !== confirmPassword) {
+            toast.error('パスワードが一致しません')
             return
         }
 
@@ -41,6 +50,10 @@ const RegisterPage = () => {
 
     const handleChangePassword = (e: ChangeEvent<HTMLInputElement>) => {
         setPassword(e.target.value)
+    }
+
+    const handleChangeConfirmPassword = (e: ChangeEvent<HTMLInputElement>) => {
+        setConfirmPassword(e.target.value)
     }
 
     return (
@@ -79,6 +92,22 @@ const RegisterPage = () => {
                             <Input
                                 value={password}
                                 onChange={handleChangePassword}
+                                type='password'
+                                placeholder='••••••••'
+                                className="pl-10"
+                            />
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1">8文字以上で入力してください</p>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            確認用パスワード
+                        </label>
+                        <div className="relative">
+                            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                            <Input
+                                value={confirmPassword}
+                                onChange={handleChangeConfirmPassword}
                                 type='password'
                                 placeholder='••••••••'
                                 className="pl-10"
