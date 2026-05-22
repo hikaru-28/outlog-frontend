@@ -4,13 +4,15 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { register } from '../api/auth'
-import { UserPlus, Mail, Lock } from 'lucide-react'
+import { UserPlus, Mail, Lock, EyeOff, Eye } from 'lucide-react'
 import { toast } from 'sonner'
 
 const RegisterPage = () => {
     const [email, setEmail] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [password, setPassword] = useState('')
+    const [showPassword, setShowPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const navigate = useNavigate()
 
     const handleSubmit = async (e: FormEvent) => {
@@ -92,10 +94,18 @@ const RegisterPage = () => {
                             <Input
                                 value={password}
                                 onChange={handleChangePassword}
-                                type='password'
+                                type={showPassword ? 'text' : 'password'}
                                 placeholder='••••••••'
                                 className="pl-10"
                             />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(prev => !prev)}
+                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                            >
+                                {showPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+                            </button>
+
                         </div>
                         <p className="text-xs text-gray-500 mt-1">8文字以上で入力してください</p>
                     </div>
@@ -108,12 +118,19 @@ const RegisterPage = () => {
                             <Input
                                 value={confirmPassword}
                                 onChange={handleChangeConfirmPassword}
-                                type='password'
+                                type={showConfirmPassword ? 'text' : 'password'}
                                 placeholder='••••••••'
                                 className="pl-10"
                             />
+                            <button
+                                type="button"
+                                onClick={() => setShowConfirmPassword(prev => !prev)}
+                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                            >
+                                {showConfirmPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+                            </button>
                         </div>
-                        <p className="text-xs text-gray-500 mt-1">8文字以上を推奨</p>
+                        <p className="text-xs text-gray-500 mt-1">パスワードを再入力してください</p>
                     </div>
                     <Button className="text-white w-full bg-indigo-600 hover:bg-indigo-700 shadow-md active:scale-95 transition-transform duration-100" type="submit">
                         <UserPlus className="w-5 h-5 mr-2" />
