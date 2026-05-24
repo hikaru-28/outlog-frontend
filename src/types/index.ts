@@ -5,11 +5,13 @@ interface User {
     updatedAt: string;
 }
 
+type InputType = '本' | 'Youtube' | '記事' | '講義' | string
+
 interface Input {
     id: string;
     userId: string;
     title: string;
-    type: string;
+    type: InputType;
     memo: string | null;
     isOutputDone: boolean;
     createdAt: string;
@@ -24,4 +26,4 @@ interface Output {
     updatedAt: string;
 }
 
-export type { User, Input, Output };
+export type { User, Input, Output, InputType };
