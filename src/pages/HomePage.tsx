@@ -1,10 +1,7 @@
-import { useState, useEffect } from 'react'
+import useInputs from '@/hooks/useInputs'
 import { Link, useNavigate } from 'react-router-dom'
-import { getAllInputs, deleteInput } from '@/api/input'
 import { Button } from '@/components/ui/button'
 import { LogOut, Plus, Edit2, Trash2, FileText, BookOpen, PlayCircle, FileCheck, Clock, AlertCircle, GraduationCap } from 'lucide-react'
-import type { Input } from '../types'
-import { toast } from 'sonner'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -18,35 +15,8 @@ import {
 } from '@/components/ui/alert-dialog'
 
 const HomePage = () => {
-    const [inputs, setInputs] = useState<Input[]>([])
-    const [currentPage, setCurrentPage] = useState<number>(1)
-    const [totalPage, setTotalPage] = useState<number>(0)
-    const [loading, setLoading] = useState<boolean>(false)
+    const { inputs, currentPage, totalPage, loading, setCurrentPage, handleDelete } = useInputs()
     const navigate = useNavigate()
-
-    const fetchInputs = async () => {
-        setLoading(true)
-        try {
-            const data = await getAllInputs(currentPage)
-            setInputs(data.inputs)
-            setTotalPage(Math.ceil(data.total / 10))
-        } catch (error) {
-            toast.error(error instanceof Error ? error.message : 'inputの取得に失敗しました')
-            console.error('inputの取得に失敗しました', error)
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    const handleDelete = async (id: string) => {
-        try {
-            await deleteInput(id)
-            toast.success('削除に成功しました')
-            fetchInputs()
-        } catch (error) {
-            toast.error('削除に失敗しました')
-        }
-    }
 
     const isOverdue = (createdAt: string) => {
         const now = new Date()
@@ -90,10 +60,6 @@ const HomePage = () => {
     }
 
     const delayClass = ['', 'animation-delay-100', 'animation-delay-200', 'animation-delay-300', 'animation-delay-400']
-
-    useEffect(() => {
-        fetchInputs()
-    }, [currentPage])
 
     return (
         <div className="animate-fade-in min-h-screen bg-gray-50">
