@@ -66,13 +66,21 @@ const HomePage = () => {
             <div className="bg-white border-b border-gray-200">
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
                     <h1 className="text-2xl font-bold text-indigo-600">Outlog</h1>
-                    <Button
-                        className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 active:scale-95 transition-transform duration-100"
-                        onClick={handleLogout}
-                    >
-                        <LogOut className="w-4 h-4 mr-2" />
-                        ログアウト
-                    </Button>
+                    <div className="flex items-center gap-3">
+                        <Link to='/stats'>
+                            <Button className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 active:scale-95 transition-transform duration-100">
+                                統計
+                            </Button>
+                        </Link>
+                        <Button
+                            className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 active:scale-95 transition-transform duration-100"
+                            onClick={handleLogout}
+                        >
+                            <LogOut className="w-4 h-4 mr-2" />
+                            ログアウト
+                        </Button>
+                    </div>
+
                 </div>
             </div>
 
