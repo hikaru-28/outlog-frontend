@@ -4,7 +4,7 @@
 
 🔗 **デモ**: [https://outlog-frontend.vercel.app](https://outlog-frontend.vercel.app)
 
-> テストアカウント: email: `test@example.com` / password: `test`
+> テストアカウント: email: `test@gmail.com` / password: `test`
 
 ---
 
