@@ -2,8 +2,23 @@ import { fetchWithAuth, BASE_URL } from './client'
 
 const url = BASE_URL
 
-const getAllInputs = async (page: number = 1, limit: number = 10) => {
-    const res = await fetchWithAuth(`${url}/inputs?page=${page}&limit=${limit}`)
+const getAllInputs = async (
+    page: number = 1,
+    limit: number = 10,
+    keyword?: string,
+    type?: string,
+    isOutputDone?: boolean,
+    sort?: string
+) => {
+    const params = new URLSearchParams()
+    params.append('page', String(page))
+    params.append('limit', String(limit))
+    if (keyword) params.append('keyword', keyword)
+    if (type) params.append('type', type)
+    if (isOutputDone !== undefined) params.append('isOutputDone', String(isOutputDone))
+    if (sort) params.append('sort', sort)
+
+    const res = await fetchWithAuth(`${url}/inputs?${params.toString()}`)
     if (!res) return
     if (!res.ok) {
         const data = await res.json()
