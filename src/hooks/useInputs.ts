@@ -7,12 +7,16 @@ const useInputs = () => {
     const [inputs, setInputs] = useState<Input[]>([])
     const [currentPage, setCurrentPage] = useState<number>(1)
     const [totalPage, setTotalPage] = useState<number>(0)
+    const [keyword, setKeyword] = useState<string>('')
+    const [filterType, setFilterType] = useState<string>('')
+    const [filterStatus, setFilterStatus] = useState<boolean | undefined>(undefined)
+    const [sort, setSort] = useState<string>('desc')
     const [loading, setLoading] = useState<boolean>(false)
 
     const fetchInputs = async () => {
         setLoading(true)
         try {
-            const data = await getAllInputs(currentPage)
+            const data = await getAllInputs(currentPage, 10, keyword, filterType, filterStatus, sort)
             setInputs(data.inputs)
             setTotalPage(Math.ceil(data.total / 10))
         } catch (error) {
@@ -35,9 +39,15 @@ const useInputs = () => {
 
     useEffect(() => {
         fetchInputs()
-    }, [currentPage])
+    }, [currentPage, keyword, filterType, filterStatus, sort])
 
-    return { inputs, currentPage, totalPage, loading, setCurrentPage, handleDelete }
+    return {
+        inputs, currentPage, totalPage, loading, setCurrentPage, handleDelete,
+        keyword, setKeyword,
+        filterType, setFilterType,
+        filterStatus, setFilterStatus,
+        sort, setSort,
+    }
 }
 
 export default useInputs
