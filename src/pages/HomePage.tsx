@@ -1,7 +1,7 @@
 import useInputs from '@/hooks/useInputs'
 import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { LogOut, Plus, Edit2, Trash2, FileText, BookOpen, PlayCircle, FileCheck, Clock, AlertCircle, GraduationCap } from 'lucide-react'
+import { LogOut, Plus, Edit2, Trash2, FileText, BookOpen, PlayCircle, FileCheck, Clock, AlertCircle, GraduationCap, Search } from 'lucide-react'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -15,7 +15,13 @@ import {
 } from '@/components/ui/alert-dialog'
 
 const HomePage = () => {
-    const { inputs, currentPage, totalPage, loading, setCurrentPage, handleDelete } = useInputs()
+    const {
+        inputs, currentPage, totalPage, loading, setCurrentPage, handleDelete,
+        keyword, setKeyword,
+        filterType, setFilterType,
+        filterStatus, setFilterStatus,
+        sort, setSort,
+    } = useInputs()
     const navigate = useNavigate()
 
     const isOverdue = (createdAt: string) => {
@@ -96,6 +102,48 @@ const HomePage = () => {
                             新規インプット
                         </Button>
                     </Link>
+                </div>
+
+                {/* 検索・フィルタ */}
+                <div className="flex flex-wrap gap-3 mb-6">
+                    <div className="relative flex-1 min-w-48">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <input
+                            type="text"
+                            placeholder="キーワード検索..."
+                            value={keyword}
+                            onChange={(e) => setKeyword(e.target.value)}
+                            className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                        />
+                    </div>
+                    <select
+                        value={filterType}
+                        onChange={(e) => setFilterType(e.target.value)}
+                        className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm bg-white"
+                    >
+                        <option value="">すべてのタイプ</option>
+                        <option value="本">📚 本</option>
+                        <option value="Youtube">🎥 Youtube</option>
+                        <option value="記事">📄 記事</option>
+                        <option value="講義">🪧 講義</option>
+                    </select>
+                    <select
+                        value={filterStatus === undefined ? '' : String(filterStatus)}
+                        onChange={(e) => setFilterStatus(e.target.value === '' ? undefined : e.target.value === 'true')}
+                        className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm bg-white"
+                    >
+                        <option value="">すべての状態</option>
+                        <option value="false">未完了</option>
+                        <option value="true">完了</option>
+                    </select>
+                    <select
+                        value={sort}
+                        onChange={(e) => setSort(e.target.value)}
+                        className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm bg-white"
+                    >
+                        <option value="desc">新しい順</option>
+                        <option value="asc">古い順</option>
+                    </select>
                 </div>
 
                 {loading ? (
