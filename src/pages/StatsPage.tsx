@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { getAllInputs } from '@/api/input'
+import { getStreak } from '@/api/stats'
 import type { Input } from '../types'
+import { toast } from 'sonner'
 import { Pie, Bar } from 'react-chartjs-2'
 import {
     Chart as ChartJS,
@@ -20,10 +22,36 @@ const StatsPage = () => {
     const [inputs, setInputs] = useState<Input[]>([])
     const [loading, setLoading] = useState(true)
 
+    // streakのstate
+    const [currentStreak, setCurrentStreak] = useState(0)
+    const [longestStreak, setLongestStreak] = useState(0)
+    const [activityData, setActivityData] = useState<{ date: string, count: number }[]>([])
+
     const fetchAllInputs = async () => {
-        const data = await getAllInputs(1, 1000)
-        setInputs(data.inputs)
-        setLoading(false)
+        try {
+            const data = await getAllInputs(1, 1000)
+            setInputs(data.inputs)
+        } catch (error) {
+            toast.error('データの取得に失敗しました')
+            console.error('データの取得に失敗しました', error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const fetchStreak = async () => {
+        try {
+            const data = await getStreak()
+            if (!data) return
+            setCurrentStreak(data.currentStreak)
+            setLongestStreak(data.longestStreak)
+            setActivityData(data.activityData)
+        } catch (error) {
+            toast.error('ストリークの取得を失敗しました')
+            console.error('ストリークの取得に失敗しました', error)
+        } finally {
+            setLoading(false)
+        }
     }
 
     // データ計算
@@ -72,6 +100,7 @@ const StatsPage = () => {
 
     useEffect(() => {
         fetchAllInputs()
+        fetchStreak()
     }, [])
 
     if (loading) {
@@ -92,7 +121,55 @@ const StatsPage = () => {
                 </div>
             </div>
 
+
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+                {/* ストリーク */}
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                    <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
+                        <p className="text-gray-600 text-sm">現在の連続日数</p>
+                        <p className="text-4xl font-bold text-orange-500 mt-2">🔥 {currentStreak}日</p>
+                    </div>
+                    <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
+                        <p className="text-gray-600 text-sm">最長連続日数</p>
+                        <p className="text-4xl font-bold text-yellow-500 mt-2">⭐ {longestStreak}日</p>
+                    </div>
+                </div>
+
+                {/* カレンダー */}
+                <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+                    <h2 className="text-lg font-semibold text-gray-900 mb-4">アクティビティ（過去90日）</h2>
+                    <div className="overflow-x-auto">
+                        <div className="flex gap-1">
+                            {/* 7日ごとに列に分ける */}
+                            {Array.from({ length: Math.ceil(activityData.length / 7) }, (_, weekIndex) => (
+                                <div key={weekIndex} className="flex flex-col gap-1">
+                                    {activityData.slice(weekIndex * 7, weekIndex * 7 + 7).map((day) => (
+                                        <div
+                                            key={day.date}
+                                            title={`${day.date}: ${day.count}件`}
+                                            className={`w-4 h-4 rounded-sm ${day.count === 0 ? 'bg-gray-100' :
+                                                day.count === 1 ? 'bg-indigo-200' :
+                                                    day.count === 2 ? 'bg-indigo-400' :
+                                                        'bg-indigo-600'
+                                                }`}
+                                        />
+                                    ))}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    {/* 凡例 */}
+                    <div className="flex items-center gap-2 mt-4 text-xs text-gray-500">
+                        <span>少ない</span>
+                        <div className="w-4 h-4 rounded-sm bg-gray-100" />
+                        <div className="w-4 h-4 rounded-sm bg-indigo-200" />
+                        <div className="w-4 h-4 rounded-sm bg-indigo-400" />
+                        <div className="w-4 h-4 rounded-sm bg-indigo-600" />
+                        <span>多い</span>
+                    </div>
+                </div>
+
                 {/* 統計カード */}
                 <div className="grid grid-cols-3 gap-4 mb-8">
                     <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
