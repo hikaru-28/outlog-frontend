@@ -138,7 +138,7 @@ const StatsPage = () => {
 
                 {/* カレンダー */}
                 <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-4">アクティビティ（過去90日）</h2>
+                    <h2 className="text-lg font-semibold text-gray-900 mb-4">アクティビティ（過去1年）</h2>
                     <div className="overflow-x-auto">
                         {/* 月ラベル */}
                         <div className="flex gap-1 mb-1">
@@ -162,9 +162,9 @@ const StatsPage = () => {
                                             key={day.date}
                                             title={`${day.date}: ${day.count}件`}
                                             className={`w-4 h-4 rounded-sm ${day.count === 0 ? 'bg-gray-100' :
-                                                    day.count === 1 ? 'bg-indigo-200' :
-                                                        day.count === 2 ? 'bg-indigo-400' :
-                                                            'bg-indigo-600'
+                                                day.count === 1 ? 'bg-indigo-200' :
+                                                    day.count === 2 ? 'bg-indigo-400' :
+                                                        'bg-indigo-600'
                                                 }`}
                                         />
                                     ))}
