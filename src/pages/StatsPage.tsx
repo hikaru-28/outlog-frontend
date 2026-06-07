@@ -125,7 +125,7 @@ const StatsPage = () => {
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
                 {/* ストリーク */}
-                <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                     <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
                         <p className="text-gray-600 text-sm">現在の連続日数</p>
                         <p className="text-4xl font-bold text-orange-500 mt-2">🔥 {currentStreak}日</p>
@@ -148,7 +148,7 @@ const StatsPage = () => {
                                 const date = new Date(firstDay.date)
                                 const isFirstWeekOfMonth = date.getDate() <= 7
                                 return (
-                                    <div key={weekIndex} className="w-4 text-xs text-gray-400">
+                                    <div key={weekIndex} className="min-w-[16px] text-xs text-gray-400">
                                         {isFirstWeekOfMonth ? `${date.getMonth() + 1}月` : ''}
                                     </div>
                                 )
@@ -184,7 +184,7 @@ const StatsPage = () => {
                 </div>
 
                 {/* 統計カード */}
-                <div className="grid grid-cols-3 gap-4 mb-8">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
                     <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
                         <p className="text-gray-600 text-sm">総インプット数</p>
                         <p className="text-4xl font-bold text-indigo-600 mt-2">{totalCount}</p>
@@ -200,7 +200,7 @@ const StatsPage = () => {
                 </div>
 
                 {/* グラフ */}
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="bg-white rounded-xl border border-gray-200 p-6">
                         <h2 className="text-lg font-semibold text-gray-900 mb-4">タイプ別内訳</h2>
                         <Pie data={pieData} />
