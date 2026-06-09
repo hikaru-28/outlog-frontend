@@ -91,7 +91,7 @@ const HomePage = () => {
             </div>
 
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="flex items-center justify-between mb-8">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
                     <div>
                         <h2 className="text-3xl font-bold text-gray-900">インプット一覧</h2>
                         <p className="text-gray-600 mt-1">{inputs.length}件のインプット</p>
@@ -105,7 +105,7 @@ const HomePage = () => {
                 </div>
 
                 {/* 検索・フィルタ */}
-                <div className="flex flex-wrap gap-3 mb-6">
+                <div className="flex flex-col sm:flex-row gap-3 mb-6">
                     <div className="relative flex-1 min-w-48">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                         <input
@@ -119,7 +119,7 @@ const HomePage = () => {
                     <select
                         value={filterType}
                         onChange={(e) => setFilterType(e.target.value)}
-                        className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm bg-white"
+                        className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm bg-white"
                     >
                         <option value="">すべてのタイプ</option>
                         <option value="本">📚 本</option>
@@ -130,7 +130,7 @@ const HomePage = () => {
                     <select
                         value={filterStatus === undefined ? '' : String(filterStatus)}
                         onChange={(e) => setFilterStatus(e.target.value === '' ? undefined : e.target.value === 'true')}
-                        className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm bg-white"
+                        className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm bg-white"
                     >
                         <option value="">すべての状態</option>
                         <option value="false">未完了</option>
@@ -139,7 +139,7 @@ const HomePage = () => {
                     <select
                         value={sort}
                         onChange={(e) => setSort(e.target.value)}
-                        className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm bg-white"
+                        className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm bg-white"
                     >
                         <option value="desc">新しい順</option>
                         <option value="asc">古い順</option>
@@ -211,46 +211,48 @@ const HomePage = () => {
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center gap-2 pt-4 border-t border-gray-200">
-                                        <Link to={`/inputs/${input.id}/output`} className="flex-1">
+                                    <div className="flex flex-col sm:flex-row gap-2 pt-4 border-t border-gray-200">
+                                        <Link to={`/inputs/${input.id}/output`} className="sm:flex-1">
                                             <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white active:scale-95 transition-transform duration-100">
                                                 <FileCheck className="w-4 h-4 mr-2" />
                                                 アウトプット
                                             </Button>
                                         </Link>
-                                        <Link to={`/inputs/${input.id}/edit`}>
-                                            <Button className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 active:scale-95 transition-transform duration-100">
-                                                <Edit2 className="w-4 h-4 mr-2" />
-                                                編集
-                                            </Button>
-                                        </Link>
-                                        <AlertDialog>
-                                            {/* これをクリックするとダイアログが開く */}
-                                            <AlertDialogTrigger asChild>
-                                                <Button className="bg-white hover:bg-red-50 text-red-600 border border-gray-300 hover:border-red-300 active:scale-95 transition-transform duration-100">
-                                                    <Trash2 className="w-4 h-4" />
+                                        <div className="flex gap-2">
+                                            <Link to={`/inputs/${input.id}/edit`} className="flex-1 sm:flex-none">
+                                                <Button className="w-full sm:w-auto bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 active:scale-95 transition-transform duration-100">
+                                                    <Edit2 className="w-4 h-4 mr-2" />
+                                                    編集
                                                 </Button>
-                                            </AlertDialogTrigger>
+                                            </Link>
+                                            <AlertDialog>
+                                                {/* これをクリックするとダイアログが開く */}
+                                                <AlertDialogTrigger asChild>
+                                                    <Button className="bg-white hover:bg-red-50 text-red-600 border border-gray-300 hover:border-red-300 active:scale-95 transition-transform duration-100">
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </Button>
+                                                </AlertDialogTrigger>
 
-                                            {/* ダイアログの中身 */}
-                                            <AlertDialogContent className="bg-white">
-                                                <AlertDialogHeader>
-                                                    <AlertDialogTitle>本当に削除しますか？</AlertDialogTitle>
-                                                    <AlertDialogDescription>
-                                                        この操作は取り消せません。
-                                                    </AlertDialogDescription>
-                                                </AlertDialogHeader>
-                                                <AlertDialogFooter>
-                                                    <AlertDialogCancel>キャンセル</AlertDialogCancel>
-                                                    <AlertDialogAction
-                                                        onClick={() => handleDelete(input.id)}
-                                                        className="bg-red-600 hover:bg-red-700 text-white"
-                                                    >
-                                                        削除
-                                                    </AlertDialogAction>
-                                                </AlertDialogFooter>
-                                            </AlertDialogContent>
-                                        </AlertDialog>
+                                                {/* ダイアログの中身 */}
+                                                <AlertDialogContent className="bg-white">
+                                                    <AlertDialogHeader>
+                                                        <AlertDialogTitle>本当に削除しますか？</AlertDialogTitle>
+                                                        <AlertDialogDescription>
+                                                            この操作は取り消せません。
+                                                        </AlertDialogDescription>
+                                                    </AlertDialogHeader>
+                                                    <AlertDialogFooter>
+                                                        <AlertDialogCancel>キャンセル</AlertDialogCancel>
+                                                        <AlertDialogAction
+                                                            onClick={() => handleDelete(input.id)}
+                                                            className="bg-red-600 hover:bg-red-700 text-white"
+                                                        >
+                                                            削除
+                                                        </AlertDialogAction>
+                                                    </AlertDialogFooter>
+                                                </AlertDialogContent>
+                                            </AlertDialog>
+                                        </div>
                                     </div>
                                 </div>
                             )
