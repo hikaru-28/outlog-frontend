@@ -33,7 +33,7 @@ const LandingPage = () => {
                     <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
                         Outlogでできること
                     </h2>
-                    <div className="grid grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
                         {features.map((feature, index) => (
                             <div key={index} className="text-center p-6 bg-gray-50 rounded-xl border border-gray-200">
                                 <div className="inline-flex items-center justify-center w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl mb-4">
