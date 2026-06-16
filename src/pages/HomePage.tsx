@@ -1,7 +1,7 @@
 import useInputs from '@/hooks/useInputs'
 import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { LogOut, Plus, Edit2, Trash2, FileText, BookOpen, PlayCircle, FileCheck, Clock, AlertCircle, GraduationCap, Search } from 'lucide-react'
+import { LogOut, Plus, Edit2, Trash2, FileText, BookOpen, PlayCircle, FileCheck, Clock, AlertCircle, GraduationCap, Search, List, LayoutGrid } from 'lucide-react'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -21,6 +21,7 @@ const HomePage = () => {
         filterType, setFilterType,
         filterStatus, setFilterStatus,
         sort, setSort,
+        viewMode, setViewMode,
     } = useInputs()
     const navigate = useNavigate()
 
@@ -146,6 +147,21 @@ const HomePage = () => {
                     </select>
                 </div>
 
+                <div className="flex justify-end gap-2 mb-4">
+                    <button
+                        onClick={() => setViewMode('list')}
+                        className={`p-2 rounded-lg border ${viewMode === 'list' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-600 border-gray-300'}`}
+                    >
+                        <List className="w-4 h-4" />
+                    </button>
+                    <button
+                        onClick={() => setViewMode('grid')}
+                        className={`p-2 rounded-lg border ${viewMode === 'grid' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-600 border-gray-300'}`}
+                    >
+                        <LayoutGrid className="w-4 h-4" />
+                    </button>
+                </div>
+
                 {loading ? (
                     <div className="grid gap-4">
                         {[...Array(3)].map((_, i) => (
@@ -165,7 +181,7 @@ const HomePage = () => {
                         </Link>
                     </div>
                 ) : (
-                    <div className="grid gap-4">
+                    <div className={viewMode === 'list' ? "grid grid-cols-1 gap-4" : "grid grid-cols-2 sm:grid-cols-3 gap-4"}>
                         {inputs.map((input, index) => {
                             const overdue = isOverdue(input.createdAt) && !input.isOutputDone
                             return (
@@ -174,86 +190,103 @@ const HomePage = () => {
                                     className={`animate-slide-up ${delayClass[index % 5]} bg-white rounded-xl border-2 p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 ${overdue ? 'border-red-200 bg-red-50' : 'border-gray-200'
                                         }`}
                                 >
-                                    <div className="flex items-start justify-between mb-4">
-                                        <div className="flex items-start gap-4 flex-1">
-                                            <div className={`p-3 rounded-lg ${input.isOutputDone ? 'bg-green-100 text-green-600' : 'bg-indigo-100 text-indigo-600'
-                                                }`}>
-                                                {getTypeIcon(input.type)}
-                                            </div>
-                                            <div className="flex-1">
-                                                <h3 className="text-xl font-semibold text-gray-900 mb-2">{input.title}</h3>
-                                                <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
-                                                    <span className="inline-flex items-center gap-1">
-                                                        {getTypeIcon(input.type, 'w-4 h-4')}
-                                                        {input.type}
-                                                    </span>
-                                                    <span className="inline-flex items-center gap-1">
-                                                        <Clock className="w-4 h-4" />
-                                                        {formatDate(input.createdAt)}
-                                                    </span>
+                                    {viewMode === 'grid' ? (
+                                        <Link to={`/inputs/${input.id}/output`} className="block">
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <div className={`p-2 rounded-lg ${input.isOutputDone ? 'bg-green-100 text-green-600' : 'bg-indigo-100 text-indigo-600'}`}>
+                                                    {getTypeIcon(input.type, 'w-4 h-4')}
                                                 </div>
-                                                {input.memo && (
-                                                    <p className="text-gray-700 text-sm bg-gray-50 p-3 rounded-lg">{input.memo}</p>
-                                                )}
-                                                {overdue && (
-                                                    <div className="flex items-center gap-2 mt-3 text-red-600 text-sm font-medium">
-                                                        <AlertCircle className="w-4 h-4" />
-                                                        インプットから24時間経過しています
-                                                    </div>
-                                                )}
+                                                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${input.isOutputDone ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                                                    {input.isOutputDone ? '✓ 完了' : '未完了'}
+                                                </span>
                                             </div>
-                                        </div>
-                                        <div className={`px-3 py-1 rounded-full text-sm font-medium ${input.isOutputDone
-                                            ? 'bg-green-100 text-green-700'
-                                            : 'bg-yellow-100 text-yellow-700'
-                                            }`}>
-                                            {input.isOutputDone ? '✓ 完了' : '未完了'}
-                                        </div>
-                                    </div>
-
-                                    <div className="flex flex-col sm:flex-row gap-2 pt-4 border-t border-gray-200">
-                                        <Link to={`/inputs/${input.id}/output`} className="sm:flex-1">
-                                            <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white active:scale-95 transition-transform duration-100">
-                                                <FileCheck className="w-4 h-4 mr-2" />
-                                                アウトプット
-                                            </Button>
+                                            <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2">{input.title}</h3>
+                                            <p className="text-xs text-gray-500">{formatDate(input.createdAt)}</p>
                                         </Link>
-                                        <div className="flex gap-2">
-                                            <Link to={`/inputs/${input.id}/edit`} className="flex-1 sm:flex-none">
-                                                <Button className="w-full sm:w-auto bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 active:scale-95 transition-transform duration-100">
-                                                    <Edit2 className="w-4 h-4 mr-2" />
-                                                    編集
-                                                </Button>
-                                            </Link>
-                                            <AlertDialog>
-                                                {/* これをクリックするとダイアログが開く */}
-                                                <AlertDialogTrigger asChild>
-                                                    <Button className="bg-white hover:bg-red-50 text-red-600 border border-gray-300 hover:border-red-300 active:scale-95 transition-transform duration-100">
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </Button>
-                                                </AlertDialogTrigger>
+                                    ) : (
+                                        <>
+                                            <div className="flex items-start justify-between mb-4">
+                                                <div className="flex items-start gap-4 flex-1">
+                                                    <div className={`p-3 rounded-lg ${input.isOutputDone ? 'bg-green-100 text-green-600' : 'bg-indigo-100 text-indigo-600'
+                                                        }`}>
+                                                        {getTypeIcon(input.type)}
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <h3 className="text-xl font-semibold text-gray-900 mb-2">{input.title}</h3>
+                                                        <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
+                                                            <span className="inline-flex items-center gap-1">
+                                                                {getTypeIcon(input.type, 'w-4 h-4')}
+                                                                {input.type}
+                                                            </span>
+                                                            <span className="inline-flex items-center gap-1">
+                                                                <Clock className="w-4 h-4" />
+                                                                {formatDate(input.createdAt)}
+                                                            </span>
+                                                        </div>
+                                                        {input.memo && (
+                                                            <p className="text-gray-700 text-sm bg-gray-50 p-3 rounded-lg">{input.memo}</p>
+                                                        )}
+                                                        {overdue && (
+                                                            <div className="flex items-center gap-2 mt-3 text-red-600 text-sm font-medium">
+                                                                <AlertCircle className="w-4 h-4" />
+                                                                インプットから24時間経過しています
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <div className={`px-3 py-1 rounded-full text-sm font-medium ${input.isOutputDone
+                                                    ? 'bg-green-100 text-green-700'
+                                                    : 'bg-yellow-100 text-yellow-700'
+                                                    }`}>
+                                                    {input.isOutputDone ? '✓ 完了' : '未完了'}
+                                                </div>
+                                            </div>
 
-                                                {/* ダイアログの中身 */}
-                                                <AlertDialogContent className="bg-white">
-                                                    <AlertDialogHeader>
-                                                        <AlertDialogTitle>本当に削除しますか？</AlertDialogTitle>
-                                                        <AlertDialogDescription>
-                                                            この操作は取り消せません。
-                                                        </AlertDialogDescription>
-                                                    </AlertDialogHeader>
-                                                    <AlertDialogFooter>
-                                                        <AlertDialogCancel>キャンセル</AlertDialogCancel>
-                                                        <AlertDialogAction
-                                                            onClick={() => handleDelete(input.id)}
-                                                            className="bg-red-600 hover:bg-red-700 text-white"
-                                                        >
-                                                            削除
-                                                        </AlertDialogAction>
-                                                    </AlertDialogFooter>
-                                                </AlertDialogContent>
-                                            </AlertDialog>
-                                        </div>
-                                    </div>
+                                            <div className="flex flex-col sm:flex-row gap-2 pt-4 border-t border-gray-200">
+                                                <Link to={`/inputs/${input.id}/output`} className="sm:flex-1">
+                                                    <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white active:scale-95 transition-transform duration-100">
+                                                        <FileCheck className="w-4 h-4 mr-2" />
+                                                        アウトプット
+                                                    </Button>
+                                                </Link>
+                                                <div className="flex gap-2">
+                                                    <Link to={`/inputs/${input.id}/edit`} className="flex-1 sm:flex-none">
+                                                        <Button className="w-full sm:w-auto bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 active:scale-95 transition-transform duration-100">
+                                                            <Edit2 className="w-4 h-4 mr-2" />
+                                                            編集
+                                                        </Button>
+                                                    </Link>
+                                                    <AlertDialog>
+                                                        {/* これをクリックするとダイアログが開く */}
+                                                        <AlertDialogTrigger asChild>
+                                                            <Button className="bg-white hover:bg-red-50 text-red-600 border border-gray-300 hover:border-red-300 active:scale-95 transition-transform duration-100">
+                                                                <Trash2 className="w-4 h-4" />
+                                                            </Button>
+                                                        </AlertDialogTrigger>
+
+                                                        {/* ダイアログの中身 */}
+                                                        <AlertDialogContent className="bg-white">
+                                                            <AlertDialogHeader>
+                                                                <AlertDialogTitle>本当に削除しますか？</AlertDialogTitle>
+                                                                <AlertDialogDescription>
+                                                                    この操作は取り消せません。
+                                                                </AlertDialogDescription>
+                                                            </AlertDialogHeader>
+                                                            <AlertDialogFooter>
+                                                                <AlertDialogCancel>キャンセル</AlertDialogCancel>
+                                                                <AlertDialogAction
+                                                                    onClick={() => handleDelete(input.id)}
+                                                                    className="bg-red-600 hover:bg-red-700 text-white"
+                                                                >
+                                                                    削除
+                                                                </AlertDialogAction>
+                                                            </AlertDialogFooter>
+                                                        </AlertDialogContent>
+                                                    </AlertDialog>
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                             )
                         })}
