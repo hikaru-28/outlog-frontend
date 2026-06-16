@@ -12,6 +12,7 @@ const useInputs = () => {
     const [filterStatus, setFilterStatus] = useState<boolean | undefined>(undefined)
     const [sort, setSort] = useState<string>('desc')
     const [loading, setLoading] = useState<boolean>(false)
+    const [viewMode, setViewMode] = useState<string>('list')
 
     const fetchInputs = async () => {
         setLoading(true)
@@ -47,6 +48,7 @@ const useInputs = () => {
         filterType, setFilterType,
         filterStatus, setFilterStatus,
         sort, setSort,
+        viewMode, setViewMode,
     }
 }
 
