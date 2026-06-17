@@ -10,6 +10,7 @@ import { toast } from 'sonner'
 
 const OutputPage = () => {
     const [output, setOutput] = useState<Output | null>(null)
+    const [outputType, setOutputType] = useState<string>('normal')
     const [content, setContent] = useState('')
     const [inputTitle, setInputTitle] = useState('')
     const [loading, setLoading] = useState(true)
@@ -21,6 +22,7 @@ const OutputPage = () => {
             const outputData = await getOutputsByInputId(id)
             if (outputData) {
                 setOutput(outputData)
+                setOutputType(outputData.outputType)
                 setContent(outputData.content)
             }
 
@@ -43,9 +45,9 @@ const OutputPage = () => {
         }
         try {
             if (output) {
-                await updateOutput(id, content)
+                await updateOutput(id, content, outputType)
             } else {
-                await createOutput(id, content)
+                await createOutput(id, content, outputType)
             }
             toast.success('保存しました')
             navigate('/home')
@@ -110,6 +112,29 @@ const OutputPage = () => {
                             </ul>
                         </div>
                     </div>
+                </div>
+
+                <div className="flex gap-2 mb-4">
+                    <button
+                        type="button"
+                        onClick={() => setOutputType('normal')}
+                        className={`px-4 py-2 rounded-lg border text-sm font-medium ${outputType === 'normal'
+                                ? 'bg-indigo-600 text-white border-indigo-600'
+                                : 'bg-white text-gray-600 border-gray-300'
+                            }`}
+                    >
+                        通常
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setOutputType('speed_write')}
+                        className={`px-4 py-2 rounded-lg border text-sm font-medium ${outputType === 'speed_write'
+                                ? 'bg-indigo-600 text-white border-indigo-600'
+                                : 'bg-white text-gray-600 border-gray-300'
+                            }`}
+                    >
+                        ⏱ 5分間速書き
+                    </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 shadow-sm">
