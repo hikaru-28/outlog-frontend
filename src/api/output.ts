@@ -13,10 +13,10 @@ const getOutputsByInputId = async (inputId: string) => {
     return data
 }
 
-const createOutput = async (inputId: string, content: string) => {
+const createOutput = async (inputId: string, content: string, outputType: string = 'normal') => {
     const res = await fetchWithAuth(`${url}/inputs/${inputId}/output`, {
         method: 'POST',
-        body: JSON.stringify({ content })
+        body: JSON.stringify({ content, outputType })
     });
     if (!res) return
     if (!res.ok) {
@@ -27,10 +27,10 @@ const createOutput = async (inputId: string, content: string) => {
     return data
 }
 
-const updateOutput = async (inputId: string, content: string) => {
+const updateOutput = async (inputId: string, content: string, outputType: string = 'normal') => {
     const res = await fetchWithAuth(`${url}/inputs/${inputId}/output`, {
         method: 'PATCH',
-        body: JSON.stringify({ content })
+        body: JSON.stringify({ content, outputType })
     })
     if (!res) return
     if (!res.ok) {
