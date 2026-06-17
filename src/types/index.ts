@@ -21,6 +21,7 @@ interface Input {
 interface Output {
     id: string;
     inputId: string;
+    outputType: string;
     content: string;
     createdAt: string;
     updatedAt: string;
