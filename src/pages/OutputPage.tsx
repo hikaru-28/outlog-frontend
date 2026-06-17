@@ -21,6 +21,17 @@ const OutputPage = () => {
     const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false)
     const [isTimeUp, setIsTimeUp] = useState<boolean>(false)
 
+    const outputTypeInfo: Record<string, { label: string; description: string }> = {
+        normal: {
+            label: '通常',
+            description: 'インプットの内容を自由に振り返り、自分の言葉でまとめます。',
+        },
+        speed_write: {
+            label: '5分間速書き',
+            description: 'タイマーが鳴るまで止まらずに書き続けます。何が記憶に残っているかを素早く確認するのに最適です。'
+        },
+    }
+
     const fetchData = async () => {
         try {
             const outputData = await getOutputsByInputId(id)
@@ -157,6 +168,10 @@ const OutputPage = () => {
                         ⏱ 5分間速書き
                     </button>
                 </div>
+
+                <p className="text-sm text-gray-600 mb-4 px-1">
+                    {outputTypeInfo[outputType].description}
+                </p>
 
                 <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 shadow-sm">
                     <div className="p-6">
