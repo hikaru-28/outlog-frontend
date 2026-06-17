@@ -17,6 +17,10 @@ const OutputPage = () => {
     const { id } = useParams() as { id: string }
     const navigate = useNavigate()
 
+    const [timeLeft, setTimeLeft] = useState<number>(5 * 60) // 5分間のタイマー（秒単位）
+    const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false)
+    const [isTimeUp, setIsTimeUp] = useState<boolean>(false)
+
     const fetchData = async () => {
         try {
             const outputData = await getOutputsByInputId(id)
@@ -64,6 +68,23 @@ const OutputPage = () => {
     useEffect(() => {
         fetchData()
     }, [])
+
+    useEffect(() => {
+        if (!isTimerRunning || timeLeft <= 0) return
+
+        const timer = setInterval(() => {
+            setTimeLeft((prev) => {
+                if (prev <= 1) {
+                    setIsTimerRunning(false)
+                    setIsTimeUp(true)
+                    return 0
+                }
+                return prev - 1
+            })
+        }, 1000)
+
+        return () => clearInterval(timer)
+    }, [isTimerRunning, timeLeft])
 
     if (loading) {
         return (
@@ -119,8 +140,8 @@ const OutputPage = () => {
                         type="button"
                         onClick={() => setOutputType('normal')}
                         className={`px-4 py-2 rounded-lg border text-sm font-medium ${outputType === 'normal'
-                                ? 'bg-indigo-600 text-white border-indigo-600'
-                                : 'bg-white text-gray-600 border-gray-300'
+                            ? 'bg-indigo-600 text-white border-indigo-600'
+                            : 'bg-white text-gray-600 border-gray-300'
                             }`}
                     >
                         通常
@@ -129,8 +150,8 @@ const OutputPage = () => {
                         type="button"
                         onClick={() => setOutputType('speed_write')}
                         className={`px-4 py-2 rounded-lg border text-sm font-medium ${outputType === 'speed_write'
-                                ? 'bg-indigo-600 text-white border-indigo-600'
-                                : 'bg-white text-gray-600 border-gray-300'
+                            ? 'bg-indigo-600 text-white border-indigo-600'
+                            : 'bg-white text-gray-600 border-gray-300'
                             }`}
                     >
                         ⏱ 5分間速書き
@@ -139,6 +160,25 @@ const OutputPage = () => {
 
                 <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 shadow-sm">
                     <div className="p-6">
+                        {outputType === 'speed_write' && (
+                            <div className="mb-4 p-4 bg-orange-50 border border-orange-200 rounded-lg flex items-center justify-between">
+                                <div className="text-2xl font-bold text-orange-600">
+                                    {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
+                                </div>
+                                {!isTimerRunning && !isTimeUp && (
+                                    <Button
+                                        type="button"
+                                        onClick={() => setIsTimerRunning(true)}
+                                        className="bg-orange-600 hover:bg-orange-700 text-white"
+                                    >
+                                        スタート
+                                    </Button>
+                                )}
+                                {isTimeUp && (
+                                    <span className="text-orange-600 font-medium">時間切れです！</span>
+                                )}
+                            </div>
+                        )}
                         <label className="block text-sm font-medium text-gray-700 mb-3">
                             アウトプット内容 <span className="text-red-500">*</span>
                         </label>
@@ -148,7 +188,8 @@ const OutputPage = () => {
                             value={content}
                             onChange={handleChange}
                             rows={12}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
+                            disabled={outputType === 'speed_write' && isTimeUp}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none disabled:bg-gray-100 disabled:cursor-not-allowed"
                         />
                         <div className="flex justify-between items-center mt-2">
                             <p className="text-xs text-gray-500">学んだ内容を自分の言葉でまとめましょう</p>
