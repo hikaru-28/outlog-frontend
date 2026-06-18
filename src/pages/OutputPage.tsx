@@ -1,5 +1,5 @@
 import type { FormEvent, ChangeEvent } from 'react'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useLayoutEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getOutputsByInputId, createOutput, updateOutput } from '@/api/output'
 import { getInputById } from '@/api/input'
@@ -108,6 +108,24 @@ const OutputPage = () => {
         mermaid.initialize({ startOnLoad: false })
     }, [])
 
+    useLayoutEffect(() => {
+        if (outputType !== 'mermaid' || !content || !mermaidRef.current) return
+
+        mermaid.render('mermaid-preview', content)
+            .then((result) => {
+                if (mermaidRef.current) {
+                    mermaidRef.current.innerHTML = result.svg
+                }
+            })
+            .catch((error) => {
+                console.error('Mermaid記法エラー:', error)
+                if (mermaidRef.current) {
+                    mermaidRef.current.innerHTML = `<p class="text-red-500 text-sm">記法にエラーがあります</p>`
+                }
+            })
+    }, [content, outputType, loading])
+
+
     if (loading) {
         return (
             <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -215,22 +233,50 @@ const OutputPage = () => {
                                 )}
                             </div>
                         )}
-                        <label className="block text-sm font-medium text-gray-700 mb-3">
-                            アウトプット内容 <span className="text-red-500">*</span>
-                        </label>
-                        <textarea
-                            placeholder="学んだことをアウトプットしましょう...&#10;&#10;例:&#10;・〇〇について理解を深めた&#10;・△△の仕組みが分かった&#10;・実際の業務で××に活かせそう"
-                            name="content"
-                            value={content}
-                            onChange={handleChange}
-                            rows={12}
-                            disabled={outputType === 'speed_write' && isTimeUp}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none disabled:bg-gray-100 disabled:cursor-not-allowed"
-                        />
-                        <div className="flex justify-between items-center mt-2">
-                            <p className="text-xs text-gray-500">学んだ内容を自分の言葉でまとめましょう</p>
-                            <p className="text-xs text-gray-400">{content.length}文字</p>
-                        </div>
+                        {outputType === 'mermaid' ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                                        Mermaidコード <span className="text-red-500">*</span>
+                                    </label>
+                                    <textarea
+                                        placeholder={`例:\ngraph TD\n  A[開始] --> B[処理]\n  B --> C[終了]`}
+                                        value={content}
+                                        onChange={handleChange}
+                                        rows={12}
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none font-mono text-sm"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                                        プレビュー
+                                    </label>
+                                    <div
+                                        ref={mermaidRef}
+                                        className="w-full h-[296px] border border-gray-300 rounded-lg p-4 overflow-auto bg-gray-50 flex items-center justify-center"
+                                    />
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                <label className="block text-sm font-medium text-gray-700 mb-3">
+                                    アウトプット内容 <span className="text-red-500">*</span>
+                                </label>
+                                <textarea
+                                    placeholder="学んだことをアウトプットしましょう...&#10;&#10;例:&#10;・〇〇について理解を深めた&#10;・△△の仕組みが分かった&#10;・実際の業務で××に活かせそう"
+                                    name="content"
+                                    value={content}
+                                    onChange={handleChange}
+                                    rows={12}
+                                    disabled={outputType === 'speed_write' && isTimeUp}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                />
+                                <div className="flex justify-between items-center mt-2">
+                                    <p className="text-xs text-gray-500">学んだ内容を自分の言葉でまとめましょう</p>
+                                    <p className="text-xs text-gray-400">{content.length}文字</p>
+                                </div>
+                            </>
+                        )}
                     </div>
 
                     <div className="flex items-center gap-3 px-6 py-4 bg-gray-50 border-t border-gray-200 rounded-b-xl">
