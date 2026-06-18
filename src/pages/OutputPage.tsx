@@ -1,5 +1,5 @@
 import type { FormEvent, ChangeEvent } from 'react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getOutputsByInputId, createOutput, updateOutput } from '@/api/output'
 import { getInputById } from '@/api/input'
@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { ArrowLeft, Save, FileText, Lightbulb } from 'lucide-react'
 import type { Output } from '@/types/index'
 import { toast } from 'sonner'
+import mermaid from 'mermaid'
 
 const OutputPage = () => {
     const [output, setOutput] = useState<Output | null>(null)
@@ -20,6 +21,8 @@ const OutputPage = () => {
     const [timeLeft, setTimeLeft] = useState<number>(5 * 60) // 5分間のタイマー（秒単位）
     const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false)
     const [isTimeUp, setIsTimeUp] = useState<boolean>(false)
+
+    const mermaidRef = useRef<HTMLDivElement>(null)
 
     const outputTypeInfo: Record<string, { label: string; description: string }> = {
         normal: {
@@ -100,6 +103,10 @@ const OutputPage = () => {
 
         return () => clearInterval(timer)
     }, [isTimerRunning, timeLeft])
+
+    useEffect(() => {
+        mermaid.initialize({ startOnLoad: false })
+    }, [])
 
     if (loading) {
         return (
