@@ -30,6 +30,10 @@ const OutputPage = () => {
             label: '5分間速書き',
             description: 'タイマーが鳴るまで止まらずに書き続けます。何が記憶に残っているかを素早く確認するのに最適です。'
         },
+        mermaid: {
+            label: '📊 図解',
+            description: 'Mermaid記法で要素間の関係性を図として可視化します。構造を整理する力が身につきます。'
+        },
     }
 
     const fetchData = async () => {
@@ -166,6 +170,16 @@ const OutputPage = () => {
                             }`}
                     >
                         ⏱ 5分間速書き
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setOutputType('mermaid')}
+                        className={`px-4 py-2 rounded-lg border text-sm font-medium ${outputType === 'mermaid'
+                            ? 'bg-indigo-600 text-white border-indigo-600'
+                            : 'bg-white text-gray-600 border-gray-300'
+                            }`}
+                    >
+                        📊 図解
                     </button>
                 </div>
 
