@@ -105,7 +105,10 @@ const OutputPage = () => {
     }, [isTimerRunning, timeLeft])
 
     useEffect(() => {
-        mermaid.initialize({ startOnLoad: false })
+        mermaid.initialize({
+            startOnLoad: false,
+            suppressErrorRendering: true
+        })
     }, [])
 
     useLayoutEffect(() => {
