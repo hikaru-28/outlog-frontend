@@ -23,6 +23,7 @@ const OutputPage = () => {
     const [isTimeUp, setIsTimeUp] = useState<boolean>(false)
 
     const mermaidRef = useRef<HTMLDivElement>(null)
+    const [showHint, setShowHint] = useState<boolean>(false)
 
     const outputTypeInfo: Record<string, { label: string; description: string }> = {
         normal: {
@@ -242,6 +243,32 @@ const OutputPage = () => {
                                     <label className="block text-sm font-medium text-gray-700 mb-3">
                                         Mermaidコード <span className="text-red-500">*</span>
                                     </label>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowHint(!showHint)}
+                                        className="text-xs text-indigo-600 hover:text-indigo-700 mb-2 flex items-center gap-1"
+                                    >
+                                        {showHint ? '▲' : '▼'} 記法のヒントを表示
+                                    </button>
+
+                                    {showHint && (
+                                        <div className="mb-3 p-3 bg-indigo-50 border border-indigo-200 rounded-lg text-xs text-gray-700 space-y-2">
+                                            <div>
+                                                <p className="font-medium text-indigo-900">矢印でつなぐ：</p>
+                                                <code className="block bg-white px-2 py-1 rounded mt-1">A --&gt; B</code>
+                                            </div>
+                                            <div>
+                                                <p className="font-medium text-indigo-900">ボックスに文字を入れる：</p>
+                                                <code className="block bg-white px-2 py-1 rounded mt-1">A[開始] --&gt; B[終了]</code>
+                                            </div>
+                                            <div>
+                                                <p className="font-medium text-indigo-900">条件分岐：</p>
+                                                <code className="block bg-white px-2 py-1 rounded mt-1">A --&gt; B{`{条件}`}<br />B --&gt;|Yes| C</code>
+                                            </div>
+                                        </div>
+                                    )}
+
                                     <textarea
                                         placeholder={`例:\ngraph TD\n  A[開始] --> B[処理]\n  B --> C[終了]`}
                                         value={content}
