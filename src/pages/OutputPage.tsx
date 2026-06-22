@@ -105,6 +105,10 @@ const OutputPage = () => {
         return () => clearInterval(timer)
     }, [isTimerRunning, timeLeft])
 
+    const insertMermaidTemplate = () => {
+        setContent(`graph TD\n  A[開始] --> B[処理]\n  B --> C[終了]`)
+    }
+
     useEffect(() => {
         mermaid.initialize({
             startOnLoad: false,
@@ -268,6 +272,14 @@ const OutputPage = () => {
                                             </div>
                                         </div>
                                     )}
+
+                                    <button
+                                        type="button"
+                                        onClick={insertMermaidTemplate}
+                                        className="text-xs text-gray-500 hover:text-indigo-600 border border-gray-300 hover:border-indigo-400 px-3 py-1 rounded-lg mb-2"
+                                    >
+                                        📋 テンプレートを挿入
+                                    </button>
 
                                     <textarea
                                         placeholder={`例:\ngraph TD\n  A[開始] --> B[処理]\n  B --> C[終了]`}
