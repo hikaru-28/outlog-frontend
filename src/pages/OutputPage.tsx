@@ -57,7 +57,14 @@ const OutputPage = () => {
             if (outputData) {
                 setOutput(outputData)
                 setOutputType(outputData.outputType)
-                setContent(outputData.content)
+
+                if (outputData.outputType === 'feynman') {
+                    const parsedContent = JSON.parse(outputData.content)
+                    setFeynmanSimple(parsedContent.simple || '')
+                    setFeynmanAnalogy(parsedContent.analogy || '')
+                } else {
+                    setContent(outputData.content)
+                }
             }
 
             const inputData = await getInputById(id)
@@ -73,15 +80,29 @@ const OutputPage = () => {
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        if (!content.trim()) {
-            toast.error('アウトプット内容を入力してください')
-            return
+
+        let submitContent = content
+        if (outputType === 'feynman') {
+            if (!feynmanSimple.trim()) {
+                toast.error('専門用語を使わずに説明する内容を入力してください')
+                return
+            }
+            submitContent = JSON.stringify({
+                simple: feynmanSimple,
+                analogy: feynmanAnalogy
+            })
+        } else {
+            if (!submitContent.trim()) {
+                toast.error('アウトプット内容を入力してください')
+                return
+            }
         }
+
         try {
             if (output) {
-                await updateOutput(id, content, outputType)
+                await updateOutput(id, submitContent, outputType)
             } else {
-                await createOutput(id, content, outputType)
+                await createOutput(id, submitContent, outputType)
             }
             toast.success('保存しました')
             navigate('/home')
