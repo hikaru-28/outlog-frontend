@@ -22,8 +22,15 @@ const OutputPage = () => {
     const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false)
     const [isTimeUp, setIsTimeUp] = useState<boolean>(false)
 
+    // Mermaidのプレビュー表示用のref
+
     const mermaidRef = useRef<HTMLDivElement>(null)
     const [showHint, setShowHint] = useState<boolean>(false)
+
+    // ファイマンテクニック
+    const [feynmanSimple, setFeynmanSimple] = useState<string>('')
+    const [feynmanAnalogy, setFeynmanAnalogy] = useState<string>('')
+
 
     const outputTypeInfo: Record<string, { label: string; description: string }> = {
         normal: {
@@ -38,6 +45,10 @@ const OutputPage = () => {
             label: '📊 図解',
             description: 'Mermaid記法で要素間の関係性を図として可視化します。構造を整理する力が身につきます。'
         },
+        feynman: {
+            label: '🧠 ファインマン・テクニック',
+            description: '専門用語を使わず、子供に説明するように書くことで理解の抜けを発見できます。例え話を使うとさらに理解が深まります。',
+        }
     }
 
     const fetchData = async () => {
@@ -214,6 +225,16 @@ const OutputPage = () => {
                     >
                         📊 図解
                     </button>
+                    <button
+                        type="button"
+                        onClick={() => setOutputType('feynman')}
+                        className={`px-4 py-2 rounded-lg border text-sm font-medium ${outputType === 'feynman'
+                            ? 'bg-indigo-600 text-white border-indigo-600'
+                            : 'bg-white text-gray-600 border-gray-300'
+                            }`}
+                    >
+                        🧠 ファインマン
+                    </button>
                 </div>
 
                 <p className="text-sm text-gray-600 mb-4 px-1">
@@ -296,6 +317,35 @@ const OutputPage = () => {
                                     <div
                                         ref={mermaidRef}
                                         className="w-full h-[296px] border border-gray-300 rounded-lg p-4 overflow-auto bg-gray-50 flex items-center justify-center"
+                                    />
+                                </div>
+                            </div>
+                        ) : outputType === 'feynman' ? (
+                            <div className="space-y-6">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        専門用語を使わずに説明する <span className="text-red-500">*</span>
+                                    </label>
+                                    <p className="text-xs text-gray-500 mb-2">小学生に説明するつもりで、難しい言葉を使わずに書いてみましょう</p>
+                                    <textarea
+                                        placeholder="例：useEffectは、画面が表示された後に「何かをする」ための仕組みです..."
+                                        value={feynmanSimple}
+                                        onChange={(e) => setFeynmanSimple(e.target.value)}
+                                        rows={6}
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        例え話で説明する
+                                    </label>
+                                    <p className="text-xs text-gray-500 mb-2">日常生活の何かに例えて説明してみましょう（任意）</p>
+                                    <textarea
+                                        placeholder="例：useEffectは、料理が完成した後に「いただきます」と言う瞬間のようなものです..."
+                                        value={feynmanAnalogy}
+                                        onChange={(e) => setFeynmanAnalogy(e.target.value)}
+                                        rows={6}
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
                                     />
                                 </div>
                             </div>
