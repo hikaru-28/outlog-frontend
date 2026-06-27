@@ -12,7 +12,11 @@ import mermaid from 'mermaid'
 const OutputPage = () => {
     const [output, setOutput] = useState<Output | null>(null)
     const [outputType, setOutputType] = useState<string>('normal')
-    const [content, setContent] = useState('')
+
+    const [normalContent, setNormalContent] = useState<string>('')
+    const [speedWriteContent, setSpeedWriteContent] = useState<string>('')
+    const [mermaidContent, setMermaidContent] = useState<string>('')
+
     const [inputTitle, setInputTitle] = useState('')
     const [loading, setLoading] = useState(true)
     const { id } = useParams() as { id: string }
@@ -51,6 +55,24 @@ const OutputPage = () => {
         }
     }
 
+    const getCurrentContent = () => {
+        switch (outputType) {
+            case 'normal': return normalContent
+            case 'speed_write': return speedWriteContent
+            case 'mermaid': return mermaidContent
+            default: return normalContent
+        }
+    }
+
+    const setCurrentContent = (value: string) => {
+        switch (outputType) {
+            case 'normal': setNormalContent(value); break
+            case 'speed_write': setSpeedWriteContent(value); break
+            case 'mermaid': setMermaidContent(value); break
+            default: setNormalContent(value); break
+        }
+    }
+
     const fetchData = async () => {
         try {
             const outputData = await getOutputsByInputId(id)
@@ -63,7 +85,11 @@ const OutputPage = () => {
                     setFeynmanSimple(parsedContent.simple || '')
                     setFeynmanAnalogy(parsedContent.analogy || '')
                 } else {
-                    setContent(outputData.content)
+                    switch (outputData.outputType) {
+                        case 'speed_write': setSpeedWriteContent(outputData.content); break
+                        case 'mermaid': setMermaidContent(outputData.content); break
+                        default: setNormalContent(outputData.content); break
+                    }
                 }
             }
 
@@ -81,7 +107,7 @@ const OutputPage = () => {
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        let submitContent = content
+        let submitContent = getCurrentContent()
         if (outputType === 'feynman') {
             if (!feynmanSimple.trim()) {
                 toast.error('専門用語を使わずに説明する内容を入力してください')
@@ -113,7 +139,7 @@ const OutputPage = () => {
     }
 
     const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-        setContent(e.target.value)
+        setCurrentContent(e.target.value)
     }
 
     useEffect(() => {
@@ -138,7 +164,7 @@ const OutputPage = () => {
     }, [isTimerRunning, timeLeft])
 
     const insertMermaidTemplate = () => {
-        setContent(`graph TD\n  A[開始] --> B[処理]\n  B --> C[終了]`)
+        setMermaidContent(`graph TD\n  A[開始] --> B[処理]\n  B --> C[終了]`)
     }
 
     useEffect(() => {
@@ -149,9 +175,9 @@ const OutputPage = () => {
     }, [])
 
     useLayoutEffect(() => {
-        if (outputType !== 'mermaid' || !content || !mermaidRef.current) return
+        if (outputType !== 'mermaid' || !mermaidContent || !mermaidRef.current) return
 
-        mermaid.render('mermaid-preview', content)
+        mermaid.render('mermaid-preview', mermaidContent)
             .then((result) => {
                 if (mermaidRef.current) {
                     mermaidRef.current.innerHTML = result.svg
@@ -163,7 +189,7 @@ const OutputPage = () => {
                     mermaidRef.current.innerHTML = `<p class="text-red-500 text-sm">記法にエラーがあります</p>`
                 }
             })
-    }, [content, outputType, loading])
+    }, [mermaidContent, outputType, loading])
 
 
     if (loading) {
@@ -325,7 +351,7 @@ const OutputPage = () => {
 
                                     <textarea
                                         placeholder={`例:\ngraph TD\n  A[開始] --> B[処理]\n  B --> C[終了]`}
-                                        value={content}
+                                        value={getCurrentContent()}
                                         onChange={handleChange}
                                         rows={12}
                                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none font-mono text-sm"
@@ -378,7 +404,7 @@ const OutputPage = () => {
                                 <textarea
                                     placeholder="学んだことをアウトプットしましょう...&#10;&#10;例:&#10;・〇〇について理解を深めた&#10;・△△の仕組みが分かった&#10;・実際の業務で××に活かせそう"
                                     name="content"
-                                    value={content}
+                                    value={getCurrentContent()}
                                     onChange={handleChange}
                                     rows={12}
                                     disabled={outputType === 'speed_write' && isTimeUp}
@@ -386,7 +412,7 @@ const OutputPage = () => {
                                 />
                                 <div className="flex justify-between items-center mt-2">
                                     <p className="text-xs text-gray-500">学んだ内容を自分の言葉でまとめましょう</p>
-                                    <p className="text-xs text-gray-400">{content.length}文字</p>
+                                    <p className="text-xs text-gray-400">{getCurrentContent().length}文字</p>
                                 </div>
                             </>
                         )}
