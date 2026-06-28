@@ -353,7 +353,7 @@ const OutputPage = () => {
                                         placeholder={`例:\ngraph TD\n  A[開始] --> B[処理]\n  B --> C[終了]`}
                                         value={getCurrentContent()}
                                         onChange={handleChange}
-                                        rows={12}
+                                        rows={21}
                                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none font-mono text-sm"
                                     />
                                 </div>
@@ -363,7 +363,7 @@ const OutputPage = () => {
                                     </label>
                                     <div
                                         ref={mermaidRef}
-                                        className="w-full h-[296px] border border-gray-300 rounded-lg p-4 overflow-auto bg-gray-50 flex items-center justify-center"
+                                        className="w-full h-[505px] border border-gray-300 rounded-lg p-4 overflow-auto bg-gray-50 flex items-start justify-center [&_svg]:max-w-full [&_svg]:h-auto"
                                     />
                                 </div>
                             </div>
