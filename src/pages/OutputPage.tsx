@@ -30,6 +30,14 @@ const OutputPage = () => {
 
     const mermaidRef = useRef<HTMLDivElement>(null)
     const [showHint, setShowHint] = useState<boolean>(false)
+    const [mermaidEditorHeight, setMermaidEditorHeight] = useState<number>(450) // 初期値を設定
+    const mermaidTextareaRef = useRef<HTMLTextAreaElement>(null)
+
+    const handleMermaidResize = () => {
+        if (mermaidTextareaRef.current) {
+            setMermaidEditorHeight(mermaidTextareaRef.current.offsetHeight)
+        }
+    }
 
     // ファイマンテクニック
     const [feynmanSimple, setFeynmanSimple] = useState<string>('')
@@ -352,9 +360,11 @@ const OutputPage = () => {
                                     <textarea
                                         placeholder={`例:\ngraph TD\n  A[開始] --> B[処理]\n  B --> C[終了]`}
                                         value={getCurrentContent()}
+                                        ref={mermaidTextareaRef}
+                                        onMouseUp={handleMermaidResize}
+                                        style={{ height: `${mermaidEditorHeight}px` }}
                                         onChange={handleChange}
-                                        rows={21}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none font-mono text-sm"
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-y font-mono text-sm"
                                     />
                                 </div>
                                 <div>
@@ -363,7 +373,8 @@ const OutputPage = () => {
                                     </label>
                                     <div
                                         ref={mermaidRef}
-                                        className="w-full h-[505px] border border-gray-300 rounded-lg p-4 overflow-auto bg-gray-50 flex items-start justify-center [&_svg]:max-w-full [&_svg]:h-auto"
+                                        style={{ height: `${mermaidEditorHeight + 59}px` }}
+                                        className="w-full border border-gray-300 rounded-lg p-4 overflow-auto bg-gray-50 flex items-start justify-center [&_svg]:max-w-full [&_svg]:h-auto"
                                     />
                                 </div>
                             </div>
