@@ -3,8 +3,8 @@ import type { ChangeEvent, RefObject } from "react"
 type MermaidOutputProps = {
     content: string
     onChange: (e: ChangeEvent<HTMLTextAreaElement>) => void
-    mermaidRef: RefObject<HTMLDivElement>
-    mermaidTextareaRef: RefObject<HTMLTextAreaElement>
+    mermaidRef: RefObject<HTMLDivElement | null>
+    mermaidTextareaRef: RefObject<HTMLTextAreaElement | null>
     mermaidEditorHeight: number
     onResize: () => void
     showHint: boolean
