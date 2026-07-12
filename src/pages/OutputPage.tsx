@@ -9,6 +9,9 @@ import type { Output } from '@/types/index'
 import { toast } from 'sonner'
 import mermaid from 'mermaid'
 import NormalOutput from '@/components/output/NormalOutput'
+import SpeedWriteOutput from '@/components/output/SpeedWriteOutput'
+import MermaidOutput from '@/components/output/MermaidOutput'
+import FeynmanOutput from '@/components/output/FeynmanOutput'
 
 const OutputPage = () => {
     const [output, setOutput] = useState<Output | null>(null)
@@ -299,115 +302,34 @@ const OutputPage = () => {
 
                 <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 shadow-sm">
                     <div className="p-6">
-                        {outputType === 'speed_write' && (
-                            <div className="mb-4 p-4 bg-orange-50 border border-orange-200 rounded-lg flex items-center justify-between">
-                                <div className="text-2xl font-bold text-orange-600">
-                                    {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
-                                </div>
-                                {!isTimerRunning && !isTimeUp && (
-                                    <Button
-                                        type="button"
-                                        onClick={() => setIsTimerRunning(true)}
-                                        className="bg-orange-600 hover:bg-orange-700 text-white"
-                                    >
-                                        スタート
-                                    </Button>
-                                )}
-                                {isTimeUp && (
-                                    <span className="text-orange-600 font-medium">時間切れです！</span>
-                                )}
-                            </div>
-                        )}
                         {outputType === 'mermaid' ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-3">
-                                        Mermaidコード <span className="text-red-500">*</span>
-                                    </label>
-
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowHint(!showHint)}
-                                        className="text-xs text-indigo-600 hover:text-indigo-700 mb-2 flex items-center gap-1"
-                                    >
-                                        {showHint ? '▲' : '▼'} 記法のヒントを表示
-                                    </button>
-
-                                    {showHint && (
-                                        <div className="mb-3 p-3 bg-indigo-50 border border-indigo-200 rounded-lg text-xs text-gray-700 space-y-2">
-                                            <div>
-                                                <p className="font-medium text-indigo-900">矢印でつなぐ：</p>
-                                                <code className="block bg-white px-2 py-1 rounded mt-1">A --&gt; B</code>
-                                            </div>
-                                            <div>
-                                                <p className="font-medium text-indigo-900">ボックスに文字を入れる：</p>
-                                                <code className="block bg-white px-2 py-1 rounded mt-1">A[開始] --&gt; B[終了]</code>
-                                            </div>
-                                            <div>
-                                                <p className="font-medium text-indigo-900">条件分岐：</p>
-                                                <code className="block bg-white px-2 py-1 rounded mt-1">A --&gt; B{`{条件}`}<br />B --&gt;|Yes| C</code>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    <button
-                                        type="button"
-                                        onClick={insertMermaidTemplate}
-                                        className="text-xs text-gray-500 hover:text-indigo-600 border border-gray-300 hover:border-indigo-400 px-3 py-1 rounded-lg mb-2"
-                                    >
-                                        📋 テンプレートを挿入
-                                    </button>
-
-                                    <textarea
-                                        placeholder={`例:\ngraph TD\n  A[開始] --> B[処理]\n  B --> C[終了]`}
-                                        value={getCurrentContent()}
-                                        ref={mermaidTextareaRef}
-                                        onMouseUp={handleMermaidResize}
-                                        style={{ height: `${mermaidEditorHeight}px` }}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-y font-mono text-sm"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-3">
-                                        プレビュー
-                                    </label>
-                                    <div
-                                        ref={mermaidRef}
-                                        style={{ height: `${mermaidEditorHeight + 59}px` }}
-                                        className="w-full border border-gray-300 rounded-lg p-4 overflow-auto bg-gray-50 flex items-start justify-center [&_svg]:max-w-full [&_svg]:h-auto"
-                                    />
-                                </div>
-                            </div>
+                            <MermaidOutput
+                                content={mermaidContent}
+                                onChange={handleChange}
+                                mermaidRef={mermaidRef}
+                                mermaidTextareaRef={mermaidTextareaRef}
+                                mermaidEditorHeight={mermaidEditorHeight}
+                                onResize={handleMermaidResize}
+                                showHint={showHint}
+                                onToggleHint={() => setShowHint(!showHint)}
+                                onInsertTemplate={insertMermaidTemplate}
+                            />
+                        ) : outputType === 'speed_write' ? (
+                            <SpeedWriteOutput
+                                content={speedWriteContent}
+                                onChange={handleChange}
+                                timeLeft={timeLeft}
+                                isTimerRunning={isTimerRunning}
+                                isTimeUp={isTimeUp}
+                                onStartTimer={() => setIsTimerRunning(true)}
+                            />
                         ) : outputType === 'feynman' ? (
-                            <div className="space-y-6">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        専門用語を使わずに説明する <span className="text-red-500">*</span>
-                                    </label>
-                                    <p className="text-xs text-gray-500 mb-2">小学生に説明するつもりで、難しい言葉を使わずに書いてみましょう</p>
-                                    <textarea
-                                        placeholder="例：useEffectは、画面が表示された後に「何かをする」ための仕組みです..."
-                                        value={feynmanSimple}
-                                        onChange={(e) => setFeynmanSimple(e.target.value)}
-                                        rows={6}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        例え話で説明する
-                                    </label>
-                                    <p className="text-xs text-gray-500 mb-2">日常生活の何かに例えて説明してみましょう（任意）</p>
-                                    <textarea
-                                        placeholder="例：useEffectは、料理が完成した後に「いただきます」と言う瞬間のようなものです..."
-                                        value={feynmanAnalogy}
-                                        onChange={(e) => setFeynmanAnalogy(e.target.value)}
-                                        rows={6}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
-                                    />
-                                </div>
-                            </div>
+                            <FeynmanOutput
+                                feynmanSimple={feynmanSimple}
+                                feynmanAnalogy={feynmanAnalogy}
+                                onChangeSimple={(e) => setFeynmanSimple(e.target.value)}
+                                onChangeAnalogy={(e) => setFeynmanAnalogy(e.target.value)}
+                            />
                         ) : (
                             <NormalOutput
                                 content={getCurrentContent()}
