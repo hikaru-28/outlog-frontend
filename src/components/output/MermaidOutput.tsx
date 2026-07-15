@@ -16,7 +16,7 @@ const MermaidOutput = ({ content, onChange, mermaidRef, mermaidTextareaRef, merm
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                     Mermaidコード <span className="text-red-500">*</span>
                 </label>
 
@@ -64,7 +64,7 @@ const MermaidOutput = ({ content, onChange, mermaidRef, mermaidTextareaRef, merm
                 />
             </div>
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                     プレビュー
                 </label>
                 <div

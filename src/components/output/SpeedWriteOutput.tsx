@@ -31,7 +31,7 @@ const SpeedWriteOutput = ({ content, onChange, timeLeft, isTimerRunning, isTimeU
                 )}
             </div>
 
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
                 アウトプット内容 <span className="text-red-500">*</span>
             </label>
             <textarea
