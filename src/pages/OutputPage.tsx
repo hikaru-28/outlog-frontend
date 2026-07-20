@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { getOutputsByInputId, createOutput, updateOutput } from '@/api/output'
 import { getInputById } from '@/api/input'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, Save, FileText, Lightbulb } from 'lucide-react'
+import { ArrowLeft, Save, FileText } from 'lucide-react'
 import type { Output } from '@/types/index'
 import { toast } from 'sonner'
 import mermaid from 'mermaid'
@@ -47,23 +47,33 @@ const OutputPage = () => {
     const [feynmanSimple, setFeynmanSimple] = useState<string>('')
     const [feynmanAnalogy, setFeynmanAnalogy] = useState<string>('')
 
+    const [showGuide, setShowGuide] = useState<boolean>(false)
 
-    const outputTypeInfo: Record<string, { label: string; description: string }> = {
+
+    const outputTypeInfo: Record<string, { label: string; description: string; suitable: string[]; steps: string[] }> = {
         normal: {
             label: '通常',
             description: 'インプットの内容を自由に振り返り、自分の言葉でまとめます。',
+            suitable: ['全般的な学習内容', '書籍・記事・講義の振り返り'],
+            steps: ['インプットの内容を思い出しながら書く', '重要なポイントを自分の言葉でまとめる', '実際の業務や生活でどう活かせるか考える']
         },
         speed_write: {
             label: '5分間速書き',
-            description: 'タイマーが鳴るまで止まらずに書き続けます。何が記憶に残っているかを素早く確認するのに最適です。'
+            description: 'タイマーが鳴るまで止まらずに書き続けます。何が記憶に残っているかを素早く確認するのに最適です。',
+            suitable: ['暗記系・手続き系の学習', 'コマンドや関数名など'],
+            steps: ['スタートを押してタイマーを開始', '整理せずに思い出せることを全て書き出す', '時間切れになったら保存する']
         },
         mermaid: {
             label: '📊 図解',
-            description: 'Mermaid記法で要素間の関係性を図として可視化します。構造を整理する力が身につきます。'
+            description: 'Mermaid記法で要素間の関係性を図として可視化します。構造を整理する力が身につきます。',
+            suitable: ['システム構成・フロー・論理構造', '物事の全体像や関係性の理解'],
+            steps: ['左側にMermaid記法でコードを書く', 'リアルタイムで右側にプレビューが表示される', '図として保存する']
         },
         feynman: {
             label: '🧠 ファインマン・テクニック',
-            description: '専門用語を使わず、子供に説明するように書くことで理解の抜けを発見できます。例え話を使うとさらに理解が深まります。',
+            description: '専門用語を使わず、子供に説明するように書くことで理解の抜けを発見できます。',
+            suitable: ['複雑な概念・理論の学習', '専門用語が多い学習内容'],
+            steps: ['専門用語を使わずに説明する', '日常生活の例え話で説明する', '説明できない部分が理解の抜けを示す']
         }
     }
 
@@ -239,19 +249,7 @@ const OutputPage = () => {
                     </div>
                 </div>
 
-                <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-xl p-6 mb-6">
-                    <div className="flex items-start gap-3">
-                        <Lightbulb className="w-6 h-6 text-indigo-600 mt-1 flex-shrink-0" />
-                        <div>
-                            <h3 className="font-semibold text-indigo-900 mb-2">アウトプットのヒント</h3>
-                            <ul className="text-sm text-indigo-800 space-y-1">
-                                <li>• 学んだことを自分の言葉で要約してみましょう</li>
-                                <li>• 重要なポイントや気づきを箇条書きにしましょう</li>
-                                <li>• 実際の業務や生活でどう活かせるか考えてみましょう</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+
 
                 <div className="flex gap-2 mb-4">
                     <button
@@ -296,9 +294,37 @@ const OutputPage = () => {
                     </button>
                 </div>
 
-                <p className="text-sm text-gray-600 mb-4 px-1">
+                <p className="text-sm text-gray-600 mb-2 px-1">
                     {outputTypeInfo[outputType].description}
                 </p>
+                <button
+                    type="button"
+                    onClick={() => setShowGuide(!showGuide)}
+                    className="text-xs text-indigo-600 hover:text-indigo-700 mb-4 px-1 flex items-center gap-1"
+                >
+                    {showGuide ? '▲' : '▼'} 使い方・向いている学習内容を見る
+                </button>
+
+                {showGuide && (
+                    <div className="mb-4 p-4 bg-indigo-50 border border-indigo-200 rounded-xl space-y-3">
+                        <div>
+                            <p className="text-xs font-semibold text-indigo-900 mb-1">📚 向いている学習内容</p>
+                            <ul className="space-y-1">
+                                {outputTypeInfo[outputType].suitable.map((item, i) => (
+                                    <li key={i} className="text-xs text-indigo-800">• {item}</li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div>
+                            <p className="text-xs font-semibold text-indigo-900 mb-1">📝 使い方</p>
+                            <ol className="space-y-1">
+                                {outputTypeInfo[outputType].steps.map((step, i) => (
+                                    <li key={i} className="text-xs text-indigo-800">{i + 1}. {step}</li>
+                                ))}
+                            </ol>
+                        </div>
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 shadow-sm">
                     <div className="p-6">
