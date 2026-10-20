@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 
 .env
+
+# Local planning notes
+PLAN.md

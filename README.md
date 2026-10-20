@@ -25,6 +25,18 @@
 | アウトプット記録 | インプットに対してアウトプットを記録・何度でも更新可能 |
 | 警告表示 | 登録から24時間経過してもアウトプット未完了のインプットをハイライト |
 | ページネーション | インプット一覧を10件ずつページネーション |
+| 検索・フィルタ・並び替え | タイトルのキーワード検索、タイプ別・完了/未完了フィルタ、作成日の昇順/降順ソート |
+| アウトプット方式の選択 | 学習内容に合わせて4つの方式から選択。方式ごとに「向いている内容」と「進め方」のガイドを表示 |
+| 学習統計 | 連続アウトプット日数（現在・最長）、過去1年のアクティビティヒートマップ、タイプ別内訳・完了率のグラフ |
+
+### アウトプット方式
+
+| 方式 | 内容 | 向いている学習 |
+|------|------|----------------|
+| 通常 | 自由に振り返り、自分の言葉でまとめる | 書籍・記事・講義の振り返り全般 |
+| 5分間速書き | タイマーが終わるまで止まらずに書き続け、記憶に残っていることを素早く確認する | 暗記系・手続き系（コマンド・関数名など） |
+| 📊 図解 | Mermaid記法で書いた図をリアルタイムでプレビューし、要素間の関係を可視化する | システム構成・フロー・論理構造 |
+| 🧠 ファインマン・テクニック | 専門用語を使わず、子供に説明するように書いて理解の抜けを見つける | 複雑な概念・理論 |
 
 ---
 
@@ -37,6 +49,10 @@
 | Tailwind CSS | ユーティリティファーストで素早くスタイリングできるため |
 | shadcn/ui | アクセシビリティに配慮した高品質なUIコンポーネントを活用するため |
 | Vite | 高速な開発環境とビルドを実現するため |
+| React Router | SPAの画面遷移と、認証が必要なルートの保護（PrivateRoute）のため |
+| Chart.js（react-chartjs-2） | 学習統計のグラフ表示のため |
+| Mermaid | 図解アウトプットをブラウザ上でレンダリングするため |
+| Vitest / Testing Library | Viteと設定を共有でき、カスタムフックやユーティリティを高速にテストできるため |
 
 ### バックエンド
 | 技術 | 選定理由 |
@@ -51,7 +67,7 @@
 |------|------|
 | Vercel | フロントエンドのホスティング |
 | Render | バックエンドのホスティング |
-| Render PostgreSQL | 本番データベース |
+| Supabase（PostgreSQL） | 本番データベース |
 
 ---
 
@@ -73,7 +89,7 @@ JavaScriptは動的型付けのため、意図しない型変換によるバグ�
 ### JWT認証
 セッション認証はサーバー側にセッション情報を保存する必要があるが、JWTはトークン自体に情報が含まれているためサーバー側に状態を持たない（ステートレス）。フロント（Vercel）とバックエンド（Render）が別サーバーに分かれている構成ではセッション共有が難しいため、JWTが適切だった。
 
-### Vercel + Render
+### Vercel + Render + Supabase
 | | Vercel+Render | AWS | Heroku |
 |--|--|--|--|
 | 料金 | 無料 | 有料 | 無料プランなし |
@@ -81,6 +97,8 @@ JavaScriptは動的型付けのため、意図しない型変換によるバグ�
 | GitHub連携 | 自動デプロイ | 手動設定 | 可能 |
 
 個人開発・学習目的では無料で使えてGitHubと連携できるVercel+Renderが最適だった。環境変数・ビルドコマンド・本番DBの分離など、実務に近いデプロイの概念を学べた。
+
+本番DBは当初Render PostgreSQLを使っていたが、Renderの無料DBには利用期限があり期限後は使えなくなるため、SupabaseのPostgreSQLに移行した。
 
 ---
 
@@ -90,9 +108,13 @@ JavaScriptは動的型付けのため、意図しない型変換によるバグ�
 outlog/
 ├── frontend/          # React + TypeScript
 │   ├── src/
-│   │   ├── api/          # APIクライアント（fetch）
-│   │   ├── components/   # 再利用UIコンポーネント
+│   │   ├── api/          # APIクライアント（fetchWithAuth）
+│   │   ├── components/
+│   │   │   ├── ui/       # shadcn/uiコンポーネント
+│   │   │   └── output/   # アウトプット方式ごとの入力コンポーネント
+│   │   ├── hooks/        # カスタムフック（useInputs）
 │   │   ├── pages/        # 各画面
+│   │   ├── test/         # Vitestのテスト
 │   │   └── types/        # 型定義
 │   └── package.json
 │
@@ -100,8 +122,9 @@ outlog/
     ├── src/
     │   ├── controllers/  # ビジネスロジック
     │   ├── middlewares/  # JWT認証
-    │   ├── routes/       # ルーティング
-    │   └── prisma/       # スキーマ・マイグレーション
+    │   └── routes/       # ルーティング
+    ├── prisma/           # スキーマ・マイグレーション
+    ├── prisma.config.ts  # Prisma v7のDB接続設定
     └── package.json
 ```
 
@@ -117,7 +140,9 @@ User ──(1対多)──> Input ──(1対1)──> Output
 |---------|-----------|
 | users | id, email, password, createdAt |
 | inputs | id, userId, title, type, memo, isOutputDone, createdAt |
-| outputs | id, inputId, content, createdAt, updatedAt |
+| outputs | id, inputId, content, outputType, createdAt, updatedAt |
+
+`outputType` はアウトプット方式（`normal` / `speed_write` / `mermaid` / `feynman`）を保存し、デフォルトは `normal`。
 
 ---
 
@@ -132,10 +157,21 @@ User ──(1対多)──> Input ──(1対1)──> Output
 ### インプット（要認証）
 | メソッド | パス | 説明 |
 |----------|------|------|
-| GET | /api/inputs | 一覧取得（ページネーション対応） |
+| GET | /api/inputs | 一覧取得（ページネーション・検索・フィルタ・ソート対応） |
+| GET | /api/inputs/:id | 詳細取得 |
 | POST | /api/inputs | 登録 |
 | PATCH | /api/inputs/:id | 編集 |
 | DELETE | /api/inputs/:id | 削除 |
+
+`GET /api/inputs` のクエリパラメータ：
+
+| パラメータ | 説明 |
+|-----------|------|
+| page / limit | ページ番号・1ページあたりの件数（デフォルト: 1 / 10） |
+| keyword | タイトルの部分一致検索（大文字・小文字を区別しない） |
+| type | タイプで絞り込み（本・Youtube・記事・講義など） |
+| isOutputDone | `true` / `false` で完了状態を絞り込み |
+| sort | `asc` で作成日の昇順（省略時は降順） |
 
 ### アウトプット（要認証）
 | メソッド | パス | 説明 |
@@ -143,6 +179,13 @@ User ──(1対多)──> Input ──(1対1)──> Output
 | GET | /api/inputs/:id/output | 取得 |
 | POST | /api/inputs/:id/output | 記録 |
 | PATCH | /api/inputs/:id/output | 更新 |
+
+POST / PATCH のリクエストボディは `content` と `outputType` を受け取る。
+
+### 学習統計（要認証）
+| メソッド | パス | 説明 |
+|----------|------|------|
+| GET | /api/stats/streak | 連続日数（現在・最長）と過去365日分のアクティビティを取得 |
 
 ---
 
@@ -153,9 +196,13 @@ User ──(1対多)──> Input ──(1対1)──> Output
 - **ページネーション**: バックエンド側でskip/takeを使ったページネーションを実装し、大量データに対応
 - **スケルトンローディング**: データ取得中はスケルトンUIを表示しUXを改善
 - **staggerアニメーション**: カードに順番に遅延をつけてリスト表示をスムーズに
+- **アウトプット方式ごとのコンポーネント分割**: 肥大化していたOutputPageを方式ごとのコンポーネントに分け、ラベルや文字数カウンターなどのUIを統一した
+- **カスタムフックとテスト**: インプット一覧の取得・削除ロジックを`useInputs`に切り出し、Vitest + Testing Libraryでテストを書いた
 
 ### バックエンド
 - **トランザクション処理**: アウトプット作成時に`isOutputDone`の更新を`$transaction`でアトミックに処理。片方だけ成功する中途半端な状態を防いだ
+- **検索・フィルタのDB側処理**: キーワード・タイプ・完了状態の条件をPrismaの`where`に組み立て、一覧取得と件数取得を`$transaction`でまとめて実行。ページネーションと絞り込みを両立した
+- **ストリーク計算**: アウトプット作成日を日付単位で重複排除し、連続日数（現在・最長）と365日分のアクティビティを算出
 - **カスケード削除**: インプット削除時に紐づくアウトプットを先に削除してから親レコードを削除することで外部キー制約エラーを回避
 - **多層バリデーション**: フロントとバックエンド両方でバリデーションを実装。フロントは素早いフィードバックのため、バックエンドはAPIを直接叩かれた場合のセキュリティのため
 
@@ -170,7 +217,7 @@ Prisma v7からDB接続URLの設定方法が大きく変わった。v6まで`sch
 Renderでのビルドが`@types/express`が見つからずに失敗した。原因は`devDependencies`に入っていたため本番ビルド時にインストールされなかったこと。`devDependencies`は本番環境では`npm install`でインストールされないことを理解し、TypeScriptのビルドに必要なパッケージは`dependencies`に入れる必要があることを学んだ。
 
 ### 環境変数の管理
-本番環境で`VITE_API_URL`が`undefined`になりAPIに繋がらなかった。ViteはビルドCHARACTER時に環境変数を埋め込む仕組みのため、`.env`ファイルはgitignoreされておりVercelには届かない。Vercelのダッシュボードで別途環境変数を設定する必要があることを学んだ。ローカルとデプロイ環境で環境変数の管理方法が異なることを理解した。
+本番環境で`VITE_API_URL`が`undefined`になりAPIに繋がらなかった。Viteはビルド時に環境変数を埋め込む仕組みのため、`.env`ファイルはgitignoreされておりVercelには届かない。Vercelのダッシュボードで別途環境変数を設定する必要があることを学んだ。ローカルとデプロイ環境で環境変数の管理方法が異なることを理解した。
 
 ---
 
@@ -190,8 +237,11 @@ npm install
 `.env`を作成：
 ```env
 DATABASE_URL="postgresql://ユーザー名@localhost:5432/outlog_dev"
+DIRECT_URL="postgresql://ユーザー名@localhost:5432/outlog_dev"
 JWT_SECRET="your-secret-key"
 ```
+
+> `DATABASE_URL` はアプリ実行時の接続先、`DIRECT_URL` はマイグレーション用の接続先（`prisma.config.ts`で使用）。Supabaseでは前者にコネクションプーラーのURL、後者に直接接続のURLを設定する。ローカルでは同じ値でよい。
 
 ```bash
 npx prisma migrate dev
@@ -214,11 +264,18 @@ VITE_API_URL=http://localhost:3000/api
 npm run dev
 ```
 
+テストの実行：
+```bash
+npx vitest
+```
+
 ---
 
 ## 今後の展望
 
+- 復習機能（間隔反復で再アウトプットを促す）
 - リマインド通知（メール・Push通知）
-- タグ・検索・フィルタ機能
-- 学習統計・グラフ表示
+- タグ機能
+- アウトプットの履歴管理
+- CI（GitHub Actions）とバックエンドのテスト
 - SNS共有機能
