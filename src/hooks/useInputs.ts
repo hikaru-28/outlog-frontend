@@ -33,7 +33,7 @@ const useInputs = () => {
             await deleteInput(id)
             toast.success('削除に成功しました')
             fetchInputs()
-        } catch (error) {
+        } catch {
             toast.error('削除に失敗しました')
         }
     }
