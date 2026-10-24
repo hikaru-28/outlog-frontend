@@ -46,7 +46,7 @@ describe('useInputs', () => {
             expect(result.current.loading).toBe(false)
         })
 
-        expect(getAllInputs).toHaveBeenCalledWith(1)
+        expect(getAllInputs).toHaveBeenCalledWith(1, 10, '', '', undefined, 'desc')
         expect(result.current.inputs).toEqual(mockInputs)
         expect(result.current.totalPage).toBe(1)
     })
